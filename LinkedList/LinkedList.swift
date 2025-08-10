@@ -35,13 +35,13 @@ class LinkedList {
    next = 2
    
    for 1st iteration
-    curr.next = prev,  1-> nil
-    prev = curr,  prev = 1
-    curr = next,  curr = 2
+   curr.next = prev,  1-> nil
+   prev = curr,  prev = 1
+   curr = next,  curr = 2
    for 2nd iteration
-    curr.next = prev,  2 -> 1
-    prev = curr, prev = 2
-    curr = next, curr = 3
+   curr.next = prev,  2 -> 1
+   prev = curr, prev = 2
+   curr = next, curr = 3
    */
   func reverseLinkedListIteratively(head: LinkedListNode<Int>?) -> LinkedListNode<Int>? {
     var curr = head
@@ -58,9 +58,9 @@ class LinkedList {
   //--------------------------------------------------------------------------------------------------
   /*
    for odd: 1 -> 2 -> 3 -> 4 -> 5 -> nil
-    mid when fast.next = nil
+   mid when fast.next = nil
    for even: 1 -> 2 -> 3 -> 4 -> nil
-    mid when fast.next.next = nil
+   mid when fast.next.next = nil
    */
   func findMiddleOfLinkedList(head: LinkedListNode<Int>?) -> LinkedListNode<Int>? {
     if head == nil || head?.next == nil {
@@ -79,7 +79,7 @@ class LinkedList {
   /*
    odd: 1 -> 2 -> 3 -> 4 -> 5 -> nil
    even: 1 -> 2 -> 3 -> 4 -> nil
-      for both even and odd, find mid and reverse the linkedlist next to mid.
+   for both even and odd, find mid and reverse the linkedlist next to mid.
    */
   func checkIfLinkedListIsPalindrome(head: LinkedListNode<Int>?) -> Bool {
     if head == nil || head?.next == nil {
@@ -290,7 +290,7 @@ class LinkedList {
   }
   
   /*
-    Merge K sorted linked lists.
+   Merge K sorted linked lists.
    */
   func mergeKLists(_ lists: [ListNode?]) -> ListNode? {
     var length = lists.count
@@ -406,5 +406,43 @@ class LinkedList {
   /*
    Question Leetcode 445: Add Two Numbers II
    */
+  
+  /*
+   Question Leetcode 138: Copy List with Random Pointer
+   */
+  func copyRandomList(_ head: Node?) -> Node? {
+    guard let head = head else {
+      return nil
+    }
+    
+    var hashTable: [Node: Node] = [:]
+    var curr: Node? = head
+    var prevCopy: Node? = nil
+    
+    // First pass: copy all nodes and store mapping in hashTable
+    while let current = curr {
+      let copy = Node(current.val)
+      hashTable[current] = copy
+      
+      if let prev = prevCopy {
+        prev.next = copy
+      }
+      
+      prevCopy = copy
+      curr = current.next
+    }
+    
+    // Second pass: assign random pointers
+    curr = head
+    while let current = curr {
+      if let copy = hashTable[current] {
+        copy.random = current.random.flatMap { hashTable[$0] }
+      }
+      curr = current.next
+    }
+    
+    return hashTable[head]
+  }
+  
   
 }
