@@ -20,6 +20,7 @@
 		DFF891592E47106800CB343F /* Greedy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Greedy.swift; sourceTree = "<group>"; };
 		DFF891602E48704800CB343F /* DP Level 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DP Level 2.swift"; sourceTree = "<group>"; };
 		DFF891622E487FA200CB343F /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
+		DFF891632E48BF6D00CB343F /* DoublyLinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoublyLinkedList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,6 +86,7 @@
 			children = (
 				DFF891552E46131600CB343F /* LinkedList.swift */,
 				DFF891622E487FA200CB343F /* LRUCache.swift */,
+				DFF891632E48BF6D00CB343F /* DoublyLinkedList.swift */,
 			);
 			path = LinkedList;
 			sourceTree = "<group>";

@@ -444,5 +444,33 @@ class LinkedList {
     return hashTable[head]
   }
   
-  
+  /*
+   Question Leetcode 142: Linked List Cycle II
+   */
+  func detectCycle(_ head: ListNode?) -> ListNode? {
+    var slow = head
+    var fast = head
+    var isCycle = false
+    var meetingPoint: ListNode? = nil
+    while fast?.next != nil && fast?.next?.next != nil {
+      slow = slow?.next
+      fast = fast?.next?.next
+      
+      if slow === fast {
+        isCycle = true
+        meetingPoint = slow
+        break
+      }
+    }
+    if isCycle {
+      fast = head
+      while slow !== fast {
+        slow = slow?.next
+        fast = fast?.next
+      }
+      return slow
+    } else {
+      return nil
+    }
+  }
 }
