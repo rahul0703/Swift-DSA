@@ -3,6 +3,9 @@
 This file provides a categorized list of important DSA topics commonly tested in technical interviews at top tech companies.
 
 ---
+## Few Rules of Thumb 👍
+- Always use a different variable name in while let, if let, or guard let to unwrap an optional of the same name.
+- **while let current = curr** should be preferred instead of **while curr != nil**
 
 ## 🔹 Array and Strings
 - Basics and manipulation
@@ -19,10 +22,14 @@ This file provides a categorized list of important DSA topics commonly tested in
 - Anagram problems
 
 ## 🔹 Linked Lists
-- Singly and Doubly Linked Lists
-- Fast and Slow pointers
-- Reversals, cycles, and intersections
-- Merge K lists
+- Reverse linkedlist
+- Reverse linkedlist in K grpups
+- Merge sort a linkedlist
+- Copy List with Random Pointer
+- LRU Cache 
+- Merge K sorted lists
+- Detect cycle in linkedlist
+- Fold and unfold a linkedlist
 
 ## 🔹 Stacks and Queues
 - Stack (with arrays or linked lists)
