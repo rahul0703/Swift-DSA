@@ -18,6 +18,8 @@
 		DFF891572E463FA100CB343F /* Backtracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backtracking.swift; sourceTree = "<group>"; };
 		DFF891582E463FE100CB343F /* Arrays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arrays.swift; sourceTree = "<group>"; };
 		DFF891592E47106800CB343F /* Greedy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Greedy.swift; sourceTree = "<group>"; };
+		DFF891602E48704800CB343F /* DP Level 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DP Level 2.swift"; sourceTree = "<group>"; };
+		DFF891622E487FA200CB343F /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,6 +39,7 @@
 		DF7DD8412E16F3ED0009256C = {
 			isa = PBXGroup;
 			children = (
+				DFF891612E487F8B00CB343F /* LinkedList */,
 				DFF8915F2E471CA000CB343F /* Stack and Queue */,
 				DFF8915E2E471C0700CB343F /* Dynamic Programming */,
 				DFF8915D2E471BE300CB343F /* Trees, Graphs & Heaps */,
@@ -44,7 +47,6 @@
 				DFF891592E47106800CB343F /* Greedy.swift */,
 				DFF891582E463FE100CB343F /* Arrays.swift */,
 				DFF891572E463FA100CB343F /* Backtracking.swift */,
-				DFF891552E46131600CB343F /* LinkedList.swift */,
 				DFDE530A2E3F1F9000BE894C /* Swift_DataStructures_CheatSheet.md */,
 				DF6CEE192E1A63BB007A73AB /* Swift Basics */,
 			);
@@ -64,6 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				DFDEBDCA2E41B2E100BE894C /* DP level 1.swift */,
+				DFF891602E48704800CB343F /* DP Level 2.swift */,
 			);
 			path = "Dynamic Programming";
 			sourceTree = "<group>";
@@ -75,6 +78,15 @@
 				DFDEBDCC2E41B5DD00BE894C /* Queue_Custom.swift */,
 			);
 			path = "Stack and Queue";
+			sourceTree = "<group>";
+		};
+		DFF891612E487F8B00CB343F /* LinkedList */ = {
+			isa = PBXGroup;
+			children = (
+				DFF891552E46131600CB343F /* LinkedList.swift */,
+				DFF891622E487FA200CB343F /* LRUCache.swift */,
+			);
+			path = LinkedList;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

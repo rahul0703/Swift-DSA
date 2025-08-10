@@ -242,9 +242,169 @@ class LinkedList {
   
   //----------------------------------------------------------------------------------------------
   /*
-   
+   Reverse in K groups in a linked list.
    */
-  func segregateEvenAndOddNodesInLinkedList(_ head: LinkedListNode<Int>?) -> LinkedListNode<Int>? {
+  
+  func reverseKGroup(_ head: ListNode?, _ k: Int) -> ListNode? {
+    var size = calculateSize(head)
+    if size < k {
+      return head
+    }
     
+    var kNextNode = calculateKNextNode(head, k)
+    var next = reverseKGroup(kNextNode, k)
+    
+    var prev: ListNode? = nil
+    var curr: ListNode? = head
+    var pointer = 0
+    
+    while(pointer < k) {
+      var nextNode = curr?.next
+      curr?.next = prev
+      prev = curr
+      curr = nextNode
+      pointer += 1
+    }
+    head?.next = next
+    return prev
   }
+  
+  func calculateSize(_ head: ListNode?) -> Int {
+    var node = head
+    var size = 0
+    while (node != nil) {
+      size += 1
+      node = node?.next
+    }
+    return size
+  }
+  
+  func calculateKNextNode(_ head: ListNode?, _ k: Int) -> ListNode? {
+    var node = head
+    var pointer = 0
+    while (pointer < k) {
+      node = node?.next
+      pointer += 1
+    }
+    return node
+  }
+  
+  /*
+    Merge K sorted linked lists.
+   */
+  func mergeKLists(_ lists: [ListNode?]) -> ListNode? {
+    var length = lists.count
+    if length == 0 {
+      return nil
+    }
+    return mergeLists(lists, 0, length-1)
+  }
+  
+  func mergeLists(_ lists: [ListNode?], _ start: Int, _ end: Int) -> ListNode? {
+    if end < start {
+      return nil
+    }
+    if start == end {
+      return lists[start]
+    }
+    
+    var mid = start + (end - start)/2
+    var firstHalf = mergeLists(lists, start, mid)
+    var secondHalf = mergeLists(lists, mid + 1, end)
+    
+    var mergedList = merge2List(firstHalf, secondHalf)
+    return mergedList
+  }
+  
+  func merge2List(_ head1: ListNode?, _ head2: ListNode?) -> ListNode? {
+    if head1 == nil {
+      return head2
+    }
+    if head2 == nil {
+      return head1
+    }
+    guard let val1 = head1?.val, let val2 = head2?.val else { return nil }
+    if val1 <= val2 {
+      var mergedHead = merge2List(head1?.next, head2)
+      head1?.next = mergedHead
+      return head1
+    } else {
+      var mergedHead = merge2List(head1, head2?.next)
+      head2?.next = mergedHead
+      return head2
+    }
+    return nil
+  }
+  
+  /*
+   Question Leetcode 2: Add Two Numbers
+   */
+  func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+    var curr1 = l1
+    var curr2 = l2
+    var carry = 0
+    var newHead: ListNode? = nil
+    var newPoiner = newHead
+    
+    while curr1 != nil && curr2 != nil {
+      let val1 = curr1?.val ?? 0
+      let val2 = curr2?.val ?? 0
+      var add = val1 + val2 + carry
+      var num = add % 10
+      carry = add / 10
+      
+      let node = ListNode(num)
+      if newHead == nil {
+        newHead = node
+        newPoiner = node
+      } else {
+        newPoiner?.next = node
+        newPoiner = newPoiner?.next
+      }
+      
+      curr1 = curr1?.next
+      curr2 = curr2?.next
+    }
+    
+    if curr1 == nil {
+      addNumber(curr2, newPoiner, carry)
+    } else if curr2 == nil {
+      addNumber(curr1, newPoiner, carry)
+    }
+    
+    // Handle carry if both lists were of equal length
+    if curr1 == nil && curr2 == nil && carry > 0 {
+      newPoiner?.next = ListNode(carry)
+    }
+    
+    return newHead
+  }
+  
+  func addNumber(_ curr: ListNode?, _ pointer: ListNode?, _ carry: Int) {
+    var curr = curr
+    var pointer = pointer
+    var carr = carry
+    
+    while curr != nil {
+      let val = curr!.val
+      let sum = val + carr
+      let num = sum % 10
+      carr = sum / 10
+      
+      let node = ListNode(num)
+      pointer?.next = node
+      pointer = pointer?.next
+      
+      curr = curr?.next
+    }
+    
+    if carr > 0 {
+      pointer?.next = ListNode(carr)
+    }
+  }
+  
+  /*
+   Question Leetcode 445: Add Two Numbers II
+   */
+  
 }

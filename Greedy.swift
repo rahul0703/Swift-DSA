@@ -258,4 +258,35 @@ class Greedy {
     
     return answer
   }
+  
+  /*
+   Question: Leetcode 871 Minimum Number of Refueling Stops
+   Very important question.
+   */
+  func minRefuelStops(_ target: Int, _ startFuel: Int, _ stations: [[Int]]) -> Int {
+    var pq = PriorityQueueCustom<Int>() // max-heap of fuel values
+    var pointer = 0
+    var dist = startFuel
+    var answer = 0
+    let n = stations.count
+    
+    while dist < target {
+      // Push all stations within reach into the heap
+      while pointer < n && stations[pointer][0] <= dist {
+        pq.push(stations[pointer][1]) // just push the fuel
+        pointer += 1
+      }
+      
+      // No stations we can use → stuck
+      if pq.isEmpty {
+        return -1
+      }
+      
+      // Refuel from the best (highest fuel) station
+      dist += pq.pop()!
+      answer += 1
+    }
+    
+    return answer
+  }
 }
