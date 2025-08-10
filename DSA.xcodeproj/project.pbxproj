@@ -10,7 +10,7 @@
 		DFDE530A2E3F1F9000BE894C /* Swift_DataStructures_CheatSheet.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Swift_DataStructures_CheatSheet.md; sourceTree = "<group>"; };
 		DFDEBDC92E41008000BE894C /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
 		DFDEBDCA2E41B2E100BE894C /* DP level 1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DP level 1.swift"; sourceTree = "<group>"; };
-		DFDEBDCB2E41B34C00BE894C /* GenricTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenricTree.swift; sourceTree = "<group>"; };
+		DFDEBDCB2E41B34C00BE894C /* GenricTreeImplementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenricTreeImplementation.swift; sourceTree = "<group>"; };
 		DFDEBDCC2E41B5DD00BE894C /* Queue_Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue_Custom.swift; sourceTree = "<group>"; };
 		DFDEBDCD2E41CE3100BE894C /* PriorityQueueCustom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriorityQueueCustom.swift; sourceTree = "<group>"; };
 		DFF891552E46131600CB343F /* LinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
@@ -21,6 +21,7 @@
 		DFF891602E48704800CB343F /* DP Level 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DP Level 2.swift"; sourceTree = "<group>"; };
 		DFF891622E487FA200CB343F /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
 		DFF891632E48BF6D00CB343F /* DoublyLinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoublyLinkedList.swift; sourceTree = "<group>"; };
+		DFF891642E48D81000CB343F /* GenricTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenricTree.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -56,9 +57,10 @@
 		DFF8915D2E471BE300CB343F /* Trees, Graphs & Heaps */ = {
 			isa = PBXGroup;
 			children = (
-				DFDEBDCB2E41B34C00BE894C /* GenricTree.swift */,
+				DFDEBDCB2E41B34C00BE894C /* GenricTreeImplementation.swift */,
 				DFDEBDC92E41008000BE894C /* Graph.swift */,
 				DFDEBDCD2E41CE3100BE894C /* PriorityQueueCustom.swift */,
+				DFF891642E48D81000CB343F /* GenricTree.swift */,
 			);
 			path = "Trees, Graphs & Heaps";
 			sourceTree = "<group>";

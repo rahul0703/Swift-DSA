@@ -473,4 +473,97 @@ class LinkedList {
       return nil
     }
   }
+  
+  /*
+   Question Leetcode 2816: Double a Number Represented as a Linked List
+   */
+  func doubleIt(_ head: LinkedListNode<Int>?) -> LinkedListNode<Int>? {
+    guard let head = head else { return nil }
+    
+    // Step 1: Reverse the list
+    let reversed = reverseLinkedListIteratively(head: head)
+    
+    // Step 2: Traverse and double
+    var curr: LinkedListNode<Int>? = reversed
+    var carry = 0
+    var prev: LinkedListNode<Int>? = nil
+    
+    while let node = curr {
+      let doubled = node.val * 2 + carry
+      node.val = doubled % 10
+      carry = doubled / 10
+      
+      prev = node
+      curr = node.next
+    }
+    
+    // Step 3: If carry remains, append new node
+    if carry > 0 {
+      prev?.next = ListNode(carry)
+    }
+    
+    // Step 4: Reverse the list back and return
+    return reverseLinkedListIteratively(head: reversed)
+  }
+  
+  
+  //Reservior Sampling Algorithm
+  class Solution {
+    private var head: LinkedListNode<Int>?
+    
+    init(_ head: LinkedListNode<Int>?) {
+      self.head = head
+    }
+    
+    func getRandom() -> Int {
+      var curr = head
+      var result = curr!.val
+      var i = 1
+      
+      while let node = curr?.next {
+        i += 1
+        // Replace result with probability 1/i
+        if Int.random(in: 0..<i) == 0 {
+          result = node.val
+        }
+        curr = node
+      }
+      
+      return result
+    }
+  }
+  
+  //How would you modify the algorithm to pick k random nodes (instead of just 1)?
+  class Solution {
+    private var head: LinkedListNode<Int>?
+    private var reservoirSize: Int
+    
+    init(_ head: LinkedListNode<Int>?, _ k: Int) {
+      self.head = head
+      self.reservoirSize = k
+    }
+    
+    func getRandomK() -> [Int] {
+      var reservoir: [Int] = []
+      var curr = head
+      var i = 0
+      
+      while let node = curr {
+        if i < reservoirSize {
+          reservoir.append(node.val)
+        } else {
+          let j = Int.random(in: 0...i)
+          if j < reservoirSize {
+            reservoir[j] = node.val
+          }
+        }
+        
+        curr = node.next
+        i += 1
+      }
+      
+      return reservoir
+    }
+  }
+  
 }
