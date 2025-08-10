@@ -22,10 +22,14 @@ This file provides a categorized list of important DSA topics commonly tested in
 - Anagram problems
 
 ## 🔹 Linked Lists
-- Singly and Doubly Linked Lists
-- Fast and Slow pointers
-- Reversals, cycles, and intersections
-- Merge K lists
+- Reverse linkedlist
+- Reverse linkedlist in K grpups
+- Merge sort a linkedlist
+- Copy List with Random Pointer
+- LRU Cache 
+- Merge K sorted lists
+- Detect cycle in linkedlist
+- Fold and unfold a linkedlist
 
 ## 🔹 Stacks and Queues
 - Stack (with arrays or linked lists)
