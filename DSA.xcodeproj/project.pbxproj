@@ -22,6 +22,8 @@
 		DFF891622E487FA200CB343F /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
 		DFF891632E48BF6D00CB343F /* DoublyLinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoublyLinkedList.swift; sourceTree = "<group>"; };
 		DFF891642E48D81000CB343F /* GenricTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenricTree.swift; sourceTree = "<group>"; };
+		DFF891652E48E6AE00CB343F /* BinaryTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinaryTree.swift; sourceTree = "<group>"; };
+		DFF891662E49150D00CB343F /* Graph-Leetcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Graph-Leetcode.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -61,6 +63,8 @@
 				DFDEBDC92E41008000BE894C /* Graph.swift */,
 				DFDEBDCD2E41CE3100BE894C /* PriorityQueueCustom.swift */,
 				DFF891642E48D81000CB343F /* GenricTree.swift */,
+				DFF891652E48E6AE00CB343F /* BinaryTree.swift */,
+				DFF891662E49150D00CB343F /* Graph-Leetcode.swift */,
 			);
 			path = "Trees, Graphs & Heaps";
 			sourceTree = "<group>";

@@ -60,5 +60,74 @@ class GenricTree {
     array.append(node.val)
   }
   
+  /*
+   Question Leetcode 582: Kill Process (Process Tree) ✅ Google tag
+   */
+  func killProcess(_ pid: [Int], _ ppid: [Int], _ kill: Int) -> [Int] {
+    var map = [Int: Node]()
+    // Create nodes
+    for id in pid {
+      map[id] = Node(id)
+    }
+    // Build tree structure
+    for i in 0..<pid.count {
+      let parentId = ppid[i]
+      if parentId != 0 {
+        map[parentId]?.children.append(map[pid[i]]!)
+      }
+    }
+    // DFS to collect killed processes
+    var result = [Int]()
+    killAllProcesses(map[kill], &result)
+    return result
+  }
   
+  private func killAllProcesses(_ node: Node?, _ result: inout [Int]) {
+    guard let node = node else { return }
+    result.append(node.val)
+    for child in node.children {
+      killAllProcesses(child, &result)
+    }
+  }
+  
+  /*
+   Leetcode 1110: Delete Nodes And Return Forest
+   */
+  var deleteNodeArray: [TreeNode?] = []
+  func delNodes(_ root: TreeNode?, _ to_delete: [Int]) -> [TreeNode?] {
+    var hashSet = Set<Int>()
+    for num in to_delete {
+      hashSet.insert(num)
+    }
+    deleteNode(root, nil, hashSet)
+    if let val = root?.val {
+      if !hashSet.contains(val) {
+        deleteNodeArray.append(root)
+      }
+    }
+    return deleteNodeArray
+  }
+  
+  private func deleteNode(_ root: TreeNode?, _ parent: TreeNode?, _ hashSet: Set<Int>) {
+    guard let node = root else { return }
+    deleteNode(node.left, node, hashSet)
+    deleteNode(node.right, node, hashSet)
+    
+    var val = node.val
+    if hashSet.contains(val) {
+      if parent != nil {
+        if parent?.left === root {
+          parent?.left = nil
+        } else {
+          parent?.right = nil
+        }
+      }
+      if node.left != nil {
+        deleteNodeArray.append(node.left)
+      }
+      if node.right != nil {
+        deleteNodeArray.append(node.right)
+      }
+    }
+  }
 }
