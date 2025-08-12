@@ -8,6 +8,17 @@
 import Foundation
 
 class BST {
+  class TreeNode {
+    var val: Int
+    var left: TreeNode?
+    var right: TreeNode?
+    
+    init(_ val: Int) {
+      self.val = val
+      self.left = nil
+      self.right = nil
+    }
+  }
   /*
    Leetcode 98: Validate Binary Search Tree
    */
@@ -161,7 +172,86 @@ class BST {
   /*
    Leetcode 426: Convert Binary Search Tree to Sorted Doubly Linked List
    */
-  func convertBSTToLinkedList(_ root: TreeNode?) -> TreeNode? {
+  class LinkedListNode {
+    var val: Int
+    var next: LinkedListNode?
+    var prev: LinkedListNode?
+    init(_ val: Int) {
+      self.val = val
+      self.next = nil
+      self.prev = nil
+    }
+  }
+  func convertBSTToDoublyLinkedList(_ root: TreeNode?) -> LinkedListNode? {
+    let (head, _) = convertBSTToDoublyLinkedListHelper(root)
+    return head
+  }
+  
+  private func convertBSTToDoublyLinkedListHelper(_ node: TreeNode?) -> (LinkedListNode?, LinkedListNode?) {
+    guard let node = node else { return (nil, nil) }
+    let current = LinkedListNode(node.val)
     
+    let (leftHead, leftTail) = convertBSTToDoublyLinkedListHelper(node.left)
+    let (rightHead, rightTail) = convertBSTToDoublyLinkedListHelper(node.right)
+    
+    // Connect left tail <-> current
+    if let leftTail = leftTail {
+      leftTail.next = current
+      current.prev = leftTail
+    }
+    
+    // Connect current <-> right head
+    if let rightHead = rightHead {
+      current.next = rightHead
+      rightHead.prev = current
+    }
+    
+    // Return new head and tail
+    let newHead = leftHead ?? current
+    let newTail = rightTail ?? current
+    return (newHead, newTail)
+  }
+  
+  /*
+   Leetcode 99: Recover Binary Search Tree
+   Very Important Question
+   */
+  func recoverTree(_ root: TreeNode?) {
+    guard let node = root else { return }
+    _ = recoverTreeHelper(node)
+    
+    guard let first = first, let second = second else { return }
+    if let third = third {
+      let temp = third.val
+      third.val = first.val
+      first.val = temp
+      return
+    } else {
+      let temp = second.val
+      second.val = first.val
+      first.val = temp
+    }
+  }
+  var first: TreeNode? = nil
+  var second: TreeNode? = nil
+  var third: TreeNode? = nil
+  var prev: TreeNode? = nil
+  func recoverTreeHelper(_ root: TreeNode?) {
+    guard let node = root else { return }
+    var value = node.val
+    
+    recoverTreeHelper(node.left)
+    if let prev = prev {
+      if prev.val > value {
+        if first != nil {
+          third = node
+        } else {
+          first = prev
+          second = node
+        }
+      }
+    }
+    prev = node
+    recoverTreeHelper(node.right)
   }
 }
