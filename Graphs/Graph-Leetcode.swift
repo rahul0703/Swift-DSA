@@ -493,5 +493,274 @@ class GraphLeetCode {
     }
     return -1
   }
+  /*
+   Leetcode 1631: Path With Minimum Effort
+   */
+  func minimumEffortPath(_ heights: [[Int]]) -> Int {
+    var pq = PriorityQueueCustom<(Int, Int, Int)>{$0.2 < $1.2}
+    var rows = heights.count
+    var cols = heights[0].count
+    var visited = Array(repeating: Array(repeating: false, count: cols), count: rows)
+    
+    pq.push((0, 0, 0))
+    
+    while !pq.isEmpty() {
+      //Remove
+      var (x, y, cost) = pq.pop()!
+      //Check visited
+      if visited[x][y] {
+        continue
+      }
+      //Mark Visited
+      visited[x][y] = true
+      //work
+      if x == rows - 1 && y == cols - 1 {
+        return cost
+      }
+      //Add ngrs
+      var distX = [1, -1, 0, 0]
+      var distY = [0, 0, -1, 1]
+      for i in 0 ..< 4 {
+        var newX = x + distX[i]
+        var newY = y + distY[i]
+        
+        if newX >= 0 && newX < rows && newY >= 0 && newY < cols && !visited[newX][newY] {
+          var newCost = max(cost, abs(heights[x][y] - heights[newX][newY]))
+          pq.push((newX, newY, newCost))
+        }
+      }
+    }
+    return -1
+  }
+  
+  /*
+   Leetcode 1168: Optimize Water Distribution in a Village
+   Very important question
+   Question: There are n houses in a village.
+   You are given an integer n and a 2D array pipes, where pipes[i] = [house1, house2, cost] represents the cost to connect house1 and house2 with a pipe.
+   You are also given an array wells, where wells[i] is the cost to build a well in the (i + 1)-th house.
+   Return the minimum total cost to supply water to all houses.
+   
+   Intution:If wells were not given, this would be a minimum spanning tree problem. but, to consider well, what we can do is
+   1. Add a new node to the graph representing the well and connect that node to all the houses with the cost of the well for that house.
+   2. Then, we can run the minimum spanning tree algorithm to find the minimum cost
+   */
+  func minCostToSupplyWater(_ n: Int, _ wells: [Int], _ pipes: [[Int]]) -> Int {
+    var visited = Array(repeating: false, count: n + 1)
+    
+    //Make the edges graph
+    var edges = pipes
+    for i in 0 ..< n {
+      edges.append([0, i + 1, wells[i]]) // Add edges from well to each house
+    }
+    //Sort the edges based on cost
+    edges.sort { $0[2] < $1[2] }
+    var totalCost = 0
+    
+    //Construct parent and rank array
+    var parent = Array(repeating: 0, count: n + 1)
+    var rank = Array(repeating: 0, count: n + 1)
+    
+    for i in 0 ..< n + 1 {
+      parent[i] = i // Initialize parent for each node
+      rank[i] = 0 // Initialize rank for union-find
+    }
+    
+    //Loop over edges
+    for edge in edges {
+      var u = edge[0]
+      var v = edge[1]
+      var cost = edge[2]
+      
+      //Run DSU
+      var parent1 = findParentSupplyWater(u, &parent)
+      var parent2 = findParentSupplyWater(v, &parent)
+      
+      if parent1 != parent2 {
+        totalCost += cost
+        unionSupplyWater(parent1, parent2, &parent, &rank) // Union the two sets
+      }
+    }
+    return totalCost
+  }
+  func findParentSupplyWater(_ x: Int, _ parent: inout [Int]) -> Int {
+    if parent[x] == x {
+      return x // If x is the root, return x
+    }
+    
+    return parent[x] = findParentSupplyWater(parent[x], &parent)
+  }
+  func unionSupplyWater(_ x: Int, _ y: Int, _ parent: inout [Int], _ rank: inout [Int]) {
+    if rank[x] > rank[y] {
+      parent[y] = x // Attach y to x
+    } else if rank[y] > rank[x] {
+      parent[x] = y // Attach x to y
+    } else {
+      parent[y] = x // Attach y to x and increment rank of x
+      rank[x] += 1
+    }
+  }
+  
+  /*
+   Leetcode 721: Accounts merge
+   Very important question
+   */
+  func accountsMerge(_ accounts: [[String]]) -> [[String]] {
+    var hashMap: [String: String] = [:]
+    var edges: [(String, String)] = []
+    //Fill the HashMao
+    for account in accounts {
+      var name = account[0]
+      for i in 1 ..< account.count {
+        var email = account[i]
+        hashMap[email] = name
+        
+        if i < account.count - 1 {
+          var email1 = account[i]
+          var email2 = account[i+1]
+          edges.append((email1, email2))
+        }
+      }
+    }
+    
+    var length = hashMap.count
+    var parent: [String: String] = [:]
+    var rank: [String: Int] = [:]
+    
+    for key in hashMap.keys {
+      parent[key] = key // Initialize parent for each node
+      rank[key] = 0 // Initialize rank for union-find
+    }
+    
+    for edge in edges {
+      var email1 = edge.0
+      var email2 = edge.1
+      
+      var parent1 = findParent(email1, &parent)
+      var parent2 = findParent(email2, &parent)
+      
+      if parent1 != parent2 {
+        union(parent1, parent2, &rank, &parent)
+      }
+    }
+    var answerMap: [String: [String]] = [:]
+    var answer: [[String]] = []
+    for email in hashMap.keys {
+      var parent = findParent(email, &parent)
+      if let _ = answerMap[parent] {
+        answerMap[parent]!.append(email)
+      } else {
+        answerMap[parent] = [email]
+      }
+    }
+    
+    for (key, value) in answerMap {
+      var subAnswer: [String] = []
+      var name = hashMap[key]!
+      subAnswer.append(name)
+      var value = value
+      value.sort()
+      for val in value {
+        subAnswer.append(val)
+      }
+      answer.append(subAnswer)
+    }
+    return answer
+  }
+  func findParent(_ x: String, _ parent: inout [String: String]) -> String {
+    // Safely unwrap parent[x]
+    guard let px = parent[x] else {
+      fatalError("Parent mapping for '\(x)' not found.")
+    }
+    
+    if px == x {
+      return x // x is the root
+    }
+    
+    let root = findParent(px, &parent)
+    parent[x] = root // path compression
+    return root
+  }
+  
+  func union(_ x: String, _ y: String, _ rank: inout [String: Int], _ parent: inout [String: String]) {
+    guard let rankX = rank[x], let rankY = rank[y] else {
+      fatalError("Rank not initialized for '\(x)' or '\(y)'")
+    }
+    
+    if rankX > rankY {
+      parent[y] = x
+    } else if rankY > rankX {
+      parent[x] = y
+    } else {
+      parent[y] = x
+      rank[x] = rankX + 1
+    }
+  }
+  
+  /*
+   Leetcode 1036: Escape a Large Maze
+   very important question
+   Intution:
+    1. Blocked noded length is 200 so, at max they can block 200*(200-1)/2 = 19900 nodes.
+    2. We just need to check,
+        a. If souce to target is reachble than return true
+        b. Or, if we can move more than 19900 moves from both source and target than both are not surrounded and return true.
+        c. If any of the source or target is sourrounded and source to target no path exists then return false.
+   */
+  func isEscapePossible(_ blocked: [[Int]], _ source: [Int], _ target: [Int]) -> Bool {
+    var blockedNodes = Set<Node>()
+    for node in blocked {
+      var x = node[0]
+      var y = node[1]
+      blockedNodes.insert(Node(x,y))
+    }
+    var answer1 = checkBFSEscapePossible(source, target, blockedNodes)
+    var answer2 = checkBFSEscapePossible(target, source, blockedNodes)
+    
+    return answer1 && answer2
+    
+  }
+  func checkBFSEscapePossible(_ source: [Int], _ target: [Int], _ blockedNodes: Set<Node>) -> Bool {
+    var size = 1000000
+    var visited = Set<Node>()
+    var queue: [(Int, Int)] = []
+    queue.append((source[0], source[1]))
+    var count = 0
+    while !queue.isEmpty {
+      //Remove
+      var (x, y) = queue.removeFirst()
+      //Check visited
+      if visited.contains(Node(x,y)) {
+        continue
+      }
+      //Mark visited
+      visited.insert(Node(x,y))
+      //work
+      if visited.count > 20000 || (x == target[0] && y == target[1]){
+        return true
+      }
+      //Add ngr
+      var dist = [(1,0),(0,1),(-1,0),(0,-1)]
+      for i in 0 ..< 4 {
+        var newX = x + dist[i].0
+        var newY = y + dist[i].1
+        
+        if newX >= 0 && newX < size && newY >= 0 && newY < size && !visited.contains(Node(newX, newY)) && !blockedNodes.contains(Node(newX, newY)) {
+          queue.append((newX, newY))
+        }
+      }
+    }
+    return false
+  }
+  
+  struct Node: Hashable {
+    let x: Int
+    let y: Int
+    
+    init(_ x: Int, _ y: Int) {
+      self.x = x
+      self.y = y
+    }
+  }
 }
 

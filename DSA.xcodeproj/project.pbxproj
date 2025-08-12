@@ -13,6 +13,7 @@
 		DFDEBDCB2E41B34C00BE894C /* GenricTreeImplementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenricTreeImplementation.swift; sourceTree = "<group>"; };
 		DFDEBDCC2E41B5DD00BE894C /* Queue_Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue_Custom.swift; sourceTree = "<group>"; };
 		DFDEBDCD2E41CE3100BE894C /* PriorityQueueCustom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriorityQueueCustom.swift; sourceTree = "<group>"; };
+		DFF80E3F2E4B370A00CB343F /* BST.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BST.swift; sourceTree = "<group>"; };
 		DFF891552E46131600CB343F /* LinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
 		DFF891562E463F0A00CB343F /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		DFF891572E463FA100CB343F /* Backtracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backtracking.swift; sourceTree = "<group>"; };
@@ -43,6 +44,8 @@
 		DF7DD8412E16F3ED0009256C = {
 			isa = PBXGroup;
 			children = (
+				DFF80E3E2E4B36C600CB343F /* Heaps and PriorityQueue */,
+				DFF80E3D2E4B36B300CB343F /* Graphs */,
 				DFF891612E487F8B00CB343F /* LinkedList */,
 				DFF8915F2E471CA000CB343F /* Stack and Queue */,
 				DFF8915E2E471C0700CB343F /* Dynamic Programming */,
@@ -56,15 +59,30 @@
 			);
 			sourceTree = "<group>";
 		};
+		DFF80E3D2E4B36B300CB343F /* Graphs */ = {
+			isa = PBXGroup;
+			children = (
+				DFDEBDC92E41008000BE894C /* Graph.swift */,
+				DFF891662E49150D00CB343F /* Graph-Leetcode.swift */,
+			);
+			path = Graphs;
+			sourceTree = "<group>";
+		};
+		DFF80E3E2E4B36C600CB343F /* Heaps and PriorityQueue */ = {
+			isa = PBXGroup;
+			children = (
+				DFDEBDCD2E41CE3100BE894C /* PriorityQueueCustom.swift */,
+			);
+			path = "Heaps and PriorityQueue";
+			sourceTree = "<group>";
+		};
 		DFF8915D2E471BE300CB343F /* Trees, Graphs & Heaps */ = {
 			isa = PBXGroup;
 			children = (
 				DFDEBDCB2E41B34C00BE894C /* GenricTreeImplementation.swift */,
-				DFDEBDC92E41008000BE894C /* Graph.swift */,
-				DFDEBDCD2E41CE3100BE894C /* PriorityQueueCustom.swift */,
 				DFF891642E48D81000CB343F /* GenricTree.swift */,
 				DFF891652E48E6AE00CB343F /* BinaryTree.swift */,
-				DFF891662E49150D00CB343F /* Graph-Leetcode.swift */,
+				DFF80E3F2E4B370A00CB343F /* BST.swift */,
 			);
 			path = "Trees, Graphs & Heaps";
 			sourceTree = "<group>";

@@ -98,45 +98,5 @@ struct PriorityQueueCustom<T> {
   func isEmpty() -> Bool {
     return elements.isEmpty
   }
-  
-  /*
-   Leetcode 1631: Path With Minimum Effort
-   */
-  func minimumEffortPath(_ heights: [[Int]]) -> Int {
-    var pq = PriorityQueueCustom<(Int, Int, Int)>{$0.2 < $1.2}
-    var rows = heights.count
-    var cols = heights[0].count
-    var visited = Array(repeating: Array(repeating: false, count: cols), count: rows)
-    
-    pq.push((0, 0, 0))
-    
-    while !pq.isEmpty() {
-      //Remove
-      var (x, y, cost) = pq.pop()!
-      //Check visited
-      if visited[x][y] {
-        continue
-      }
-      //Mark Visited
-      visited[x][y] = true
-      //work
-      if x == rows - 1 && y == cols - 1 {
-        return cost
-      }
-      //Add ngrs
-      var distX = [1, -1, 0, 0]
-      var distY = [0, 0, -1, 1]
-      for i in 0 ..< 4 {
-        var newX = x + distX[i]
-        var newY = y + distY[i]
-        
-        if newX >= 0 && newX < rows && newY >= 0 && newY < cols && !visited[newX][newY] {
-          var newCost = max(cost, abs(heights[x][y] - heights[newX][newY]))
-          pq.push((newX, newY, newCost))
-        }
-      }
-    }
-    return -1
-  }
 }
 
