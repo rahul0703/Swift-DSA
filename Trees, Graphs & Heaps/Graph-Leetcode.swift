@@ -209,5 +209,289 @@ class GraphLeetCode {
     }
     return -1
   }
+  
+  /*
+   Leetcode 1293: Shortest Path in a Grid with Obstacles Elimination
+   Very Important Question
+   */
+  func shortestPath(_ grid: [[Int]], _ k: Int) -> Int {
+    var rows = grid.count
+    var cols = grid[0].count
+    var queue: [(x: Int, y: Int, steps: Int, eliminated: Int)] = []
+    var visited = Array(repeating: Array(repeating: Set<Int>(), count: cols), count: rows)
+    
+    queue.append((0, 0, 0, 0))
+    
+    while !queue.isEmpty {
+      //Remove
+      let (x, y, steps, eliminated) = queue.removeFirst()
+      
+      //Check Visited
+      if visited[x][y].contains(eliminated) {
+        continue
+      }
+      
+      //Mark Visited
+      visited[x][y].insert(eliminated)
+      
+      //Work
+      if x == rows - 1 && y == cols - 1 {
+        return steps
+      }
+      
+      //Add Ngrs
+      var directions = [(0,1), (0,-1), (1,0), (-1,0)]
+      for dir in directions {
+        let nx = x + dir.0
+        let ny = y + dir.1
+        
+        if nx >= 0 && nx < rows && ny >= 0 && ny < cols {
+          let isObstacle = grid[nx][ny] == 1
+          let newEliminated = eliminated + (isObstacle ? 1 : 0)
+          
+          if newEliminated <= k && !visited[nx][ny].contains(newEliminated) {
+            queue.append((nx, ny, steps + 1, newEliminated))
+          }
+        }
+      }
+    }
+    return -1
+  }
+  
+  /*
+   Question leetcode 207: Course Schedule
+   */
+  func canFinish(_ numCourses: Int, _ prerequisites: [[Int]]) -> Bool {
+    var graph: [[Int]] = Array(repeating: [], count: numCourses)
+    var nDegree = Array(repeating: 0, count: numCourses)
+    for edges in prerequisites {
+      nDegree[edges[0]] += 1
+      graph[edges[1]].append(edges[0])
+    }
+    var queue: [Int] = []
+    for i in 0 ..< numCourses {
+      if nDegree[i] == 0 {
+        queue.append(i)
+      }
+    }
+    while !queue.isEmpty {
+      var popped = queue.removeFirst()
+      for ngr in graph[popped] {
+        nDegree[ngr] -= 1
+        if nDegree[ngr] <= 0 {
+          queue.append(ngr)
+        }
+      }
+    }
+    for val in nDegree {
+      if val > 0 {
+        return false
+      }
+    }
+    return true
+  }
+  
+  /*
+   Leetcode 269: Alien Dictionary
+   */
+  func alienOrder(_ words: [String]) -> String {
+    var graph = [Character: [Character]]()
+    var inDegree = [Character: Int]()
+    
+    // Initialize graph with all unique letters
+    for word in words {
+      for char in word {
+        graph[char] = []
+        inDegree[char] = 0
+      }
+    }
+    
+    // Build graph using adjacent word pairs
+    for i in 0..<words.count - 1 {
+      let w1 = Array(words[i])
+      let w2 = Array(words[i + 1])
+      let minLen = min(w1.count, w2.count)
+      var foundDiff = false
+      
+      for j in 0..<minLen {
+        if w1[j] != w2[j] {
+          let from = w1[j]
+          let to = w2[j]
+          if !(graph[from]?.contains(to) ?? false) {
+            graph[from]?.append(to)
+            inDegree[to, default: 0] += 1
+          }
+          foundDiff = true
+          break
+        }
+      }
+      
+      // Edge case: prefix violation → invalid order
+      if !foundDiff && w1.count > w2.count {
+        return ""
+      }
+    }
+    
+    // Topological sort using Kahn's algorithm
+    var queue = [Character]()
+    for (char, degree) in inDegree {
+      if degree == 0 {
+        queue.append(char)
+      }
+    }
+    
+    var result = ""
+    while !queue.isEmpty {
+      let current = queue.removeFirst()
+      result.append(current)
+      for neighbor in graph[current] ?? [] {
+        inDegree[neighbor]! -= 1
+        if inDegree[neighbor] == 0 {
+          queue.append(neighbor)
+        }
+      }
+    }
+    
+    return result.count == inDegree.count ? result : ""
+  }
+  
+  /*
+   Leetcode 310: Minimum Height Trees
+   Very Important Question
+   Approach:
+   1. Build the graph as an adjacency list
+   2. Find all leaves (nodes with degree 1)
+   3. While the number of nodes left > 2:
+   a. Remove all current leaves
+   b. Update neighbors’ degrees
+   c. Add new leaves to the queue
+   d. Return remaining nodes — these are the centroids
+   
+   Odd-length trees have 1 central node → 1 centroid
+   Even-length trees have 2 central nodes → 2 centroids
+   */
+  func findMinHeightTrees(_ n: Int, _ edges: [[Int]]) -> [Int] {
+    if n == 1 { return [0] }
+    // Step 1: Build the graph
+    var graph = Array(repeating: Set<Int>(), count: n)
+    for edge in edges {
+      let u = edge[0], v = edge[1]
+      graph[u].insert(v)
+      graph[v].insert(u)
+    }
+    // Step 2: Initialize leaves (degree 1)
+    var leaves = [Int]()
+    for i in 0..<n {
+      if graph[i].count == 1 {
+        leaves.append(i)
+      }
+    }
+    var remainingNodes = n
+    // Step 3: Trim leaves layer by layer
+    while remainingNodes > 2 {
+      remainingNodes -= leaves.count
+      var newLeaves = [Int]()
+      
+      for leaf in leaves {
+        let neighbor = graph[leaf].first!
+        graph[neighbor].remove(leaf)
+        if graph[neighbor].count == 1 {
+          newLeaves.append(neighbor)
+        }
+      }
+      leaves = newLeaves
+    }
+    return leaves
+  }
+  
+  /*
+   Leetcode 1928: Minimum Cost to Reach Destination in Time
+   Very important question
+   */
+  func minCost(_ maxTime: Int, _ edges: [[Int]], _ passingFees: [Int]) -> Int {
+    var graph: [Int: [(Int, Int)]] = [:]
+    var n = passingFees.count
+    var pq = PriorityQueueCustom<(Int, Int, Int)> {
+      if $0.1 == $1.1 {
+        return $0.2 < $1.2
+      }
+      return $0.1 < $1.1
+    }
+    var visited: [Int: Int] = [:]
+    
+    //build graph
+    for edge in edges {
+      var u = edge[0]
+      var v = edge[1]
+      var time = edge[2]
+      
+      graph[v, default: []].append((u, time))
+      graph[u, default: []].append((v, time))
+    }
+    pq.push((0, passingFees[0], 0))
+    while !pq.isEmpty() {
+      //Remove
+      var (node, cost, time) = pq.pop()!
+      print("node \(node) with cost \(cost)")
+      //Check Visited
+      if visited.keys.contains(node) && visited[node]! <= time {
+        continue
+      }
+      //Mark Visited
+      visited[node] = time
+      //Work
+      if node == n-1 {
+        return cost
+      }
+      //Add ngrs
+      for tuple in graph[node, default: []] {
+        var ngr = tuple.0
+        var distance = tuple.1
+        if time + distance > maxTime || (visited.keys.contains(ngr) && visited[ngr]! <= time + distance) {
+          continue
+        }
+        pq.push((ngr, cost + passingFees[ngr], time + distance))
+      }
+    }
+    return -1
+  }
+  
+  /*
+   Leetcode 778: Swim in Rising Water
+   */
+  func swimInWater(_ grid: [[Int]]) -> Int {
+    var rows = grid.count
+    var cols = grid[0].count
+    var visited = Array(repeating: Array(repeating: false, count: cols), count: rows)
+    var pq = PriorityQueueCustom<(Int, Int, Int)> {$0.2 < $1.2}
+    pq.push((0, 0, grid[0][0]))
+    
+    while !pq.isEmpty() {
+      //Remove
+      var (x, y, cost) = pq.pop()!
+      //Check visisted
+      if visited[x][y] {
+        continue
+      }
+      //Mark Visited
+      visited[x][y] = true
+      //work
+      if x == rows-1 && y == cols - 1 {
+        return cost
+      }
+      //Add ngr
+      var dist = [(0,1), (0, -1), (1, 0), (-1,0)]
+      for i in 0 ..< 4 {
+        var ngrX = x + dist[i].0
+        var ngrY = y + dist[i].1
+        
+        if ngrX >= 0 && ngrX < rows && ngrY >= 0 && ngrY < cols && !visited[ngrX][ngrY] {
+          var maxCost = max(cost, grid[ngrX][ngrY])
+          pq.push((ngrX, ngrY, maxCost))
+        }
+      }
+    }
+    return -1
+  }
 }
 
