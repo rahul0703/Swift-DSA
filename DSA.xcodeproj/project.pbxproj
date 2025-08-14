@@ -41,9 +41,20 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXGroup section */
+		DF57E9292E4CE98000290A5C /* Arrays and Algorithms */ = {
+			isa = PBXGroup;
+			children = (
+				DFF891582E463FE100CB343F /* Arrays.swift */,
+				DFF891592E47106800CB343F /* Greedy.swift */,
+				DFF891572E463FA100CB343F /* Backtracking.swift */,
+			);
+			path = "Arrays and Algorithms";
+			sourceTree = "<group>";
+		};
 		DF7DD8412E16F3ED0009256C = {
 			isa = PBXGroup;
 			children = (
+				DF57E9292E4CE98000290A5C /* Arrays and Algorithms */,
 				DFF80E3E2E4B36C600CB343F /* Heaps and PriorityQueue */,
 				DFF80E3D2E4B36B300CB343F /* Graphs */,
 				DFF891612E487F8B00CB343F /* LinkedList */,
@@ -51,9 +62,6 @@
 				DFF8915E2E471C0700CB343F /* Dynamic Programming */,
 				DFF8915D2E471BE300CB343F /* Trees, Graphs & Heaps */,
 				DFF8915B2E471A9600CB343F /* DSA Notes */,
-				DFF891592E47106800CB343F /* Greedy.swift */,
-				DFF891582E463FE100CB343F /* Arrays.swift */,
-				DFF891572E463FA100CB343F /* Backtracking.swift */,
 				DFDE530A2E3F1F9000BE894C /* Swift_DataStructures_CheatSheet.md */,
 				DF6CEE192E1A63BB007A73AB /* Swift Basics */,
 			);
