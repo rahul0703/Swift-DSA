@@ -297,4 +297,172 @@ class Backtracking {
   }
   
   
+  /*
+   Leetcode 40: Combination Sum II
+   Very important question.
+   */
+  func combinationSum2(_ candidates: [Int], _ target: Int) -> [[Int]] {
+    let nums = candidates.sorted()
+    var path: [Int] = []
+    var ans: [[Int]] = []
+    
+    func dfs(_ start: Int, _ remain: Int) {
+      if remain == 0 {
+        ans.append(path)
+        return
+      }
+      var i = start
+      while i < nums.count {
+        let v = nums[i]
+        if v > remain { break }                    // pruning by sorted order
+        
+        // skip duplicates at THIS depth
+        if i > start && nums[i] == nums[i - 1] {
+          i += 1
+          continue
+        }
+        
+        path.append(v)
+        dfs(i + 1, remain - v)                     // i+1 because each number can be used once
+        path.removeLast()
+        i += 1
+      }
+    }
+    
+    dfs(0, target)
+    return ans
+  }
+  
+  /*
+   Leetcode 216: Combination Sum III
+   */
+  func combinationSum3(_ k: Int, _ n: Int) -> [[Int]] {
+    var ans = [[Int]]()
+    var subAns = [Int]()
+    
+    func recursion(_ idx: Int, _ sum: Int, _ count: Int) {
+      if sum == n && idx == 10 && count == k {
+        var clone = subAns
+        ans.append(clone)
+      }
+      
+      if sum > n || count > k || idx > 9 {
+        return
+      }
+      
+      subAns.append(idx)
+      recursion(idx + 1, sum + idx, count + 1)
+      subAns.removeLast()
+      recursion(idx + 1, sum, count)
+    }
+    recursion(1, 0, 0)
+    return ans
+  }
+  
+  /*
+   Leetcode 93: Restore IP Addresses
+   */
+  func restoreIpAddresses(_ s: String) -> [String] {
+    var len = s.count
+    var ans = [String]()
+    if len < 4 {
+      return ans
+    }
+    
+    func isValidStringFinal(_ str: String) -> Bool {
+      let parts = str.split(separator: ".", omittingEmptySubsequences: false)
+      for part in parts {
+        if part.isEmpty || part.count > 3 || (part.hasPrefix("0") && part.count > 1) {
+          return false
+        }
+        let num = Int(part)!
+        if num > 255 {
+          return false
+        }
+      }
+      print(str)
+      return true
+    }
+    func backtrack(_ idx: Int, _ count: Int, _ str: String) {
+      if idx == len {
+        if count == 3 && isValidStringFinal(str) {
+          ans.append(str)
+        }
+        return
+      }
+      if count > 3 {
+        return
+      }
+      
+      var firstHalf = String(str.prefix(idx+count))
+      var secondHalf = String(str.dropFirst(idx+count))
+      var newString = firstHalf + "." + secondHalf
+      backtrack(idx + 1, count + 1, newString)
+      backtrack(idx+1, count, str)
+    }
+    
+    backtrack(0, 0, s)
+    return ans
+  }
+  
+  /*
+   Leetcode 79: Word Search
+   Very important question.
+   */
+  func exist(_ board: [[Character]], _ word: String) -> Bool {
+    var lenX = board.count
+    var lenY = board[0].count
+    var visited = Array(repeating: Array(repeating: false, count: lenY), count: lenX)
+    var next = [(1,0),(-1,0),(0,1),(0,-1)]
+    
+    func backtrack(_ x: Int, _ y: Int, _ visited: inout [[Bool]], _ str: inout [Character]) -> Bool {
+      var char = board[x][y]
+      
+      str.append(char)
+      visited[x][y] = true
+      
+      if String(str) == word {
+        return true
+      }
+      
+      var len = str.count
+      if len >= word.count {
+        str.removeLast()
+        visited[x][y] = false
+        return false
+      }
+      
+      if String(word.prefix(len)) == String(str) {
+        for i in 0 ..< 4 {
+          var nextX = x + next[i].0
+          var nextY = y + next[i].1
+          
+          if nextX >= 0 && nextX < lenX && nextY >= 0 && nextY < lenY && !visited[nextX][nextY] {
+            var ans = backtrack(nextX, nextY, &visited, &str)
+            if ans {
+              return true
+            }
+          }
+        }
+      }
+      visited[x][y] = false
+      str.removeLast()
+      return false
+    }
+    
+    
+    var array = [Character]()
+    for i in 0 ..< lenX {
+      for j in 0 ..< lenY {
+        if String(board[i][j]) == String(word.prefix(1)) {
+          var ans = backtrack(i, j, &visited, &array)
+          if ans {
+            return true
+          }
+        }
+      }
+    }
+    return false
+  }
+  
 }
