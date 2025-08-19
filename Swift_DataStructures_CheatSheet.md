@@ -148,6 +148,43 @@ let t = (1, "a")
 
 ---
 
+## 8. Comparable and Comparator in Swift
+
+### Conforming to `Comparable`
+
+```swift
+struct Person: Comparable {
+    let name: String
+    let age: Int
+    static func < (lhs: Person, rhs: Person) -> Bool {
+        return lhs.age < rhs.age
+    }
+}
+```
+
+| Syntax | Description | Time Complexity |
+|--------|-------------|-----------------|
+| `static func <` | Defines less-than logic | O(1) |
+| `==` | Equatable conformance | O(1) |
+| `array.sort()` | Uses `<` for sorting | O(n log n) |
+
+### Using `sort(by:)` for Custom Comparators
+
+```swift
+let nums = [5, 3, 8]
+let sorted = nums.sorted(by: { $0 > $1 })
+```
+
+| Syntax | Description | Time Complexity |
+|--------|-------------|-----------------|
+| `sorted(by: <)` | Sorts using custom logic | O(n log n) |
+| `{ $0.property < $1.property }` | Custom comparator | O(1) per comparison |
+| `array.sorted()` | Sorts based on `Comparable` | O(n log n) |
+
+---
+
+
+
 ## 🔗 Notes
 
 - Time complexities are approximated for typical use cases.
