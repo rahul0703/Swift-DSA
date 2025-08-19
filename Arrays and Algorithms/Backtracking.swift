@@ -173,4 +173,128 @@ class Backtracking {
     }
     return current.value
   }
+  
+  //Leetcode 17: Letter Combinations of a Phone Number
+  func letterCombinations(_ digits: String) -> [String] {
+    var charArray = Array(digits)
+    var idx = 0
+    var length = digits.count
+    var dict: [Int: [String]] = [2: ["a", "b","c"], 3:["d","e","f"], 4:["g","h","i"], 5:["j","k","l"],6:["m","n","o"],7:["p","q","r","s"],8:["t","u","v"],9:["w","x","y","z"]]
+    
+    func backtracking(_ idx: Int) -> [String] {
+      if idx >= length {
+        return []
+      }
+      
+      var subArray = backtracking(idx + 1)
+      var num = Int(String(charArray[idx]))!
+      var answer: [String] = []
+      for char in dict[num]! {
+        if subArray.count > 0 {
+          for subAns in subArray {
+            answer.append(char + subAns)
+          }
+        } else {
+          answer.append(char)
+        }
+      }
+      return answer
+    }
+    var answer = backtracking(idx)
+    return answer
+  }
+  
+  /*
+   Leetcode 22: Generate Parentheses
+   Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+   Approach: use backtracking to generate all combinations of parentheses.
+   open < n, close < open
+   */
+  func generateParenthesis(_ n: Int) -> [String] {
+    var stack: [String] = []
+    var res: [String] = []
+    
+    func backtrack(_ start: Int, _ end: Int) {
+      if start == end && end == n {
+        res.append(stack.joined())
+        return
+      }
+      
+      if start < n {
+        stack.append("(")
+        backtrack(start + 1, end)
+        stack.removeLast()
+      }
+      
+      if end < start {
+        stack.append(")")
+        backtrack(start, end + 1)
+        stack.removeLast()
+      }
+    }
+    
+    backtrack(0,0)
+    return res
+  }
+  
+  /*
+   Leetcode 78: Subsets
+   */
+  func subsets(_ nums: [Int]) -> [[Int]] {
+    var len = nums.count
+    
+    func backTrack(_ n: Int) -> [[Int]] {
+      if n == 0 {
+        return [[]]
+      }
+      var answer = [[Int]]()
+      var subArray = backTrack(n-1)
+      for subAns in subArray {
+        answer.append(subAns)
+        var newAnswer = subAns
+        newAnswer.append(nums[n-1])
+        answer.append(newAnswer)
+      }
+      
+      return answer
+    }
+    return backTrack(len)
+  }
+  
+  /*
+   Leetcode 39: Combination Sum
+   */
+  func combinationSum(_ can: [Int], _ tar: Int) -> [[Int]] {
+    var ans = [[Int]]()
+    var len = can.count
+    var subAns = [Int]()
+    var hashset = Set<[Int]>()
+    func backtrack(_ idx: Int, _ sum: Int) {
+      if sum == tar {
+        var clone = subAns
+        if !hashset.contains(clone) {
+          hashset.insert(clone)
+          ans.append(clone)
+        }
+        return
+      }
+      
+      if idx == len || sum > tar {
+        return
+      }
+      
+      var num = can[idx]
+      
+      subAns.append(num)
+      backtrack(idx, sum + num)
+      backtrack(idx + 1, sum + num)
+      subAns.removeLast()
+      backtrack(idx + 1, sum)
+    }
+    
+    backtrack(0, 0)
+    return ans
+  }
+  
+  
 }
