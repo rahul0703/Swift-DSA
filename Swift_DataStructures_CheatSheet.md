@@ -1,33 +1,71 @@
-# 📄 Swift Data Structures and Comparators Cheat Sheet
+# 📄 Swift Built-in Methods for DSA Cheat Sheet (Complete)
 
 ---
 
-## 1. Arrays in Swift
+## 1. String in Swift
 
 ```swift
-var arr = [1, 2, 3, 4]
+let str = "hello"
 ```
 
 | Syntax | Description | Time Complexity |
 |--------|-------------|-----------------|
-| `arr.append(5)` | Adds an element to the end | O(1) amortized |
-| `arr.insert(0, at: 0)` | Inserts element at index | O(n) |
-| `arr.remove(at: 2)` | Removes element at index | O(n) |
-| `arr[1]` | Accesses element at index | O(1) |
-| `arr.count` | Gets array length | O(1) |
-| `arr.contains(3)` | Checks if array contains value | O(n) |
-| `arr.sort()` | Sorts in ascending order | O(n log n) |
-| `arr.reverse()` | Reverses the array | O(n) |
-| `for item in arr {}` | Iterates over array | O(n) |
+| `str.count` | Number of characters | O(1) |
+| `str.isEmpty` | Check if empty | O(1) |
+| `str.hasPrefix("he")` / `str.hasSuffix("lo")` | Check for prefix/suffix | O(k) |
+| `str.lowercased()` / `uppercased()` | Convert case | O(n) |
+| `str.reversed()` | Returns reversed collection | O(n) |
+| `String(str.reversed())` | Reversed string | O(n) |
+| `str.dropFirst(n)` / `dropLast(n)` | Remove n chars from start/end | O(n) |
+| `str.prefix(n)` / `suffix(n)` | Get first/last n characters | O(k) |
+| `str.index(str.startIndex, offsetBy: n)` | Get index offset | O(1) |
+| `str[str.index(...)]` | Access character by index | O(1) |
+| `str.replacingOccurrences(of: "a", with: "b")` | Replace substring | O(n) |
+| `str.components(separatedBy: " ")` | Split by separator | O(n) |
+| `str.split(separator: ",")` | Split by character and omit empty strings | O(n) |
+| `str.contains("el")` | Substring search | O(n) |
+| `str.filter { $0 != "a" }` | Filter characters | O(n) |
+| `str.map { $0.uppercased() }` | Transform characters | O(n) |
+| `str.sorted()` | Sort characters | O(n log n) |
 
 ---
 
-## 2. Stack in Swift (Using Array)
+## 2. Array in Swift
 
 ```swift
-var stack: [Int] = []
-stack.append(1) // push
-_ = stack.popLast() // pop
+var arr = [1, 2, 3]
+```
+
+| Syntax | Description | Time Complexity |
+|--------|-------------|-----------------|
+| `arr.count` | Number of elements | O(1) |
+| `arr.isEmpty` | Check if empty | O(1) |
+| `arr.append(x)` | Add to end | O(1) amortized |
+| `arr.insert(x, at: i)` | Insert at index | O(n) |
+| `arr.remove(at: i)` | Remove by index | O(n) |
+| `arr.popLast()` / `removeLast()` | Remove last element | O(1) |
+| `arr.first` / `last` | Access first/last element | O(1) |
+| `arr.reverse()` / `arr.reversed()` | Reverse in-place / new reversed array | O(n) |
+| `arr.sort()` / `arr.sorted()` | Sort in-place / new sorted array | O(n log n) |
+| `arr.contains(x)` | Search for element | O(n) |
+| `arr.enumerated()` | Get index + value pair | O(n) |
+| `arr.prefix(n)` / `suffix(n)` | Slice of first/last n elements | O(k) |
+| `arr.dropFirst(n)` / `dropLast(n)` | Drop elements from start/end | O(n) |
+| `arr.map { $0 * 2 }` | Transform each element | O(n) |
+| `arr.filter { $0 % 2 == 0 }` | Keep elements matching condition | O(n) |
+| `arr.reduce(0, +)` | Sum of elements | O(n) |
+| `arr.removeAll()` | Clear array | O(n) |
+| `arr.joined()` | Join strings in array | O(n) |
+| `arr.swapAt(i, j)` | Swap values at indices | O(1) |
+| `arr.index(of: x)` | Index of first occurrence | O(n) |
+| `arr.min()` / `max()` | Min/max values | O(n) |
+
+---
+
+## 3. Stack in Swift (Using Array)
+
+```swift
+var stack = [Int]()
 ```
 
 | Syntax | Description | Time Complexity |
@@ -39,118 +77,39 @@ _ = stack.popLast() // pop
 
 ---
 
-## 3. Queue in Swift (Using Two Stacks)
+## 4. Queue in Swift (Using Array)
 
 ```swift
-struct EfficientQueue<T> {
-    private var inbox: [T] = []
-    private var outbox: [T] = []
-
-    mutating func enqueue(_ element: T) {
-        inbox.append(element)
-    }
-
-    mutating func dequeue() -> T? {
-        if outbox.isEmpty {
-            outbox = inbox.reversed()
-            inbox.removeAll()
-        }
-        return outbox.popLast()
-    }
-
-    func peek() -> T? {
-        return outbox.isEmpty ? inbox.first : outbox.last
-    }
-
-    var isEmpty: Bool {
-        return inbox.isEmpty && outbox.isEmpty
-    }
-}
+var queue = [Int]()
 ```
 
 | Syntax | Description | Time Complexity |
 |--------|-------------|-----------------|
-| `enqueue(x)` | Adds to queue | O(1) |
-| `dequeue()` | Removes from front | O(1) amortized |
-| `peek()` | Peeks front element | O(1) |
-| `isEmpty` | Checks if queue is empty | O(1) |
+| `queue.append(x)` | Enqueue | O(1) |
+| `queue.removeFirst()` | Dequeue | O(n) |
+| `queue.first` | Peek front | O(1) |
+| `queue.isEmpty` | Check if empty | O(1) |
 
 ---
 
-## 4. LinkedList in Swift
+## 5. Set in Swift
 
 ```swift
-class ListNode {
-    var val: Int
-    var next: ListNode?
-    init(_ val: Int) {
-        self.val = val
-        self.next = nil
-    }
-}
+var s: Set<Int> = [1, 2, 3]
 ```
 
 | Syntax | Description | Time Complexity |
 |--------|-------------|-----------------|
-| `ListNode(5)` | Creates a node | O(1) |
-| `node.next = anotherNode` | Links to next node | O(1) |
-| `while node != nil {}` | Traverses list | O(n) |
-| `node.val` | Accesses node value | O(1) |
-
----
-
-## 5. PriorityQueue in Swift (Using Binary Heap)
-
-```swift
-struct PriorityQueue<T: Comparable> {
-    private var heap = [T]()
-
-    var isEmpty: Bool { heap.isEmpty }
-    var peek: T? { heap.first }
-
-    mutating func enqueue(_ element: T) {
-        heap.append(element)
-        siftUp(heap.count - 1)
-    }
-
-    mutating func dequeue() -> T? {
-        guard !heap.isEmpty else { return nil }
-        heap.swapAt(0, heap.count - 1)
-        let item = heap.removeLast()
-        siftDown(0)
-        return item
-    }
-
-    private mutating func siftUp(_ index: Int) {
-        var child = index, parent = (child - 1) / 2
-        while child > 0 && heap[child] > heap[parent] {
-            heap.swapAt(child, parent)
-            child = parent
-            parent = (child - 1) / 2
-        }
-    }
-
-    private mutating func siftDown(_ index: Int) {
-        var parent = index
-        while true {
-            let left = 2 * parent + 1, right = 2 * parent + 2
-            var candidate = parent
-            if left < heap.count && heap[left] > heap[candidate] { candidate = left }
-            if right < heap.count && heap[right] > heap[candidate] { candidate = right }
-            if candidate == parent { return }
-            heap.swapAt(parent, candidate)
-            parent = candidate
-        }
-    }
-}
-```
-
-| Syntax | Description | Time Complexity |
-|--------|-------------|-----------------|
-| `enqueue(x)` | Inserts into heap | O(log n) |
-| `dequeue()` | Removes top element | O(log n) |
-| `peek` | Peeks top element | O(1) |
-| `isEmpty` | Checks if empty | O(1) |
+| `s.insert(x)` | Add element | O(1) |
+| `s.contains(x)` | Check presence | O(1) |
+| `s.remove(x)` | Remove element | O(1) |
+| `s.union(Set)` | Combine sets | O(n) |
+| `s.intersection(Set)` | Common elements | O(n) |
+| `s.subtracting(Set)` | Difference | O(n) |
+| `s.isSubset(of:)` / `isSuperset(of:)` | Set relation checks | O(n) |
+| `s.isEmpty` / `s.count` | Status checks | O(1) |
+| `s.sorted()` | Sorted version | O(n log n) |
+| `s.forEach { ... }` | Iterate | O(n) |
 
 ---
 
@@ -162,62 +121,36 @@ var dict = ["a": 1, "b": 2]
 
 | Syntax | Description | Time Complexity |
 |--------|-------------|-----------------|
-| `dict["c"] = 3` | Adds or updates key-value | O(1) |
-| `dict["a"]` | Accesses value by key | O(1) |
-| `dict.removeValue(forKey: "b")` | Removes a key | O(1) |
-| `dict.keys` | Gets all keys | O(n) |
-| `dict.values` | Gets all values | O(n) |
-| `dict.isEmpty` | Checks if empty | O(1) |
-| `dict.count` | Gets number of pairs | O(1) |
+| `dict["a"]` | Access value | O(1) |
+| `dict["a"] = nil` | Remove key | O(1) |
+| `dict.keys` / `dict.values` | Get keys/values | O(n) |
+| `dict.updateValue(3, forKey: "a")` | Update value | O(1) |
+| `dict.removeValue(forKey: "a")` | Remove by key | O(1) |
+| `dict.contains { $0.key == "a" }` | Check key (slower) | O(n) |
+| `dict.isEmpty` / `dict.count` | Status checks | O(1) |
+| `for (k, v) in dict` | Iterate key-values | O(n) |
+| `dict.mapValues { $0 * 2 }` | Transform values | O(n) |
+| `dict.merge(otherDict) { (_, new) in new }` | Combine dictionaries | O(n) |
+| `dict.filter { $0.value > 10 }` | Filter pairs | O(n) |
 
 ---
 
-## 7. Set in Swift
+## 7. Tuple in Swift
 
 ```swift
-var s: Set = [1, 2, 3]
+let t = (1, "a")
 ```
 
 | Syntax | Description | Time Complexity |
 |--------|-------------|-----------------|
-| `s.insert(4)` | Inserts a value | O(1) |
-| `s.remove(2)` | Removes a value | O(1) |
-| `s.contains(3)` | Checks for existence | O(1) |
-| `s.union([4,5])` | Combines sets | O(n) |
-| `s.intersection([2,3])` | Common elements | O(n) |
-| `s.isEmpty` | Checks if set is empty | O(1) |
+| `t.0` | First element | O(1) |
+| `t.1` | Second element | O(1) |
 
 ---
 
-## 8. Comparable and Comparator in Swift
+## 🔗 Notes
 
-### Conforming to `Comparable`
+- Time complexities are approximated for typical use cases.
+- Some operations (like `removeFirst()` in Array) are slower due to internal memory shifts.
+- Use `Deque` from `Swift Collections` package for O(1) front and back operations.
 
-```swift
-struct Person: Comparable {
-    let name: String
-    let age: Int
-    static func < (lhs: Person, rhs: Person) -> Bool {
-        return lhs.age < rhs.age
-    }
-}
-```
-
-| Syntax | Description | Time Complexity |
-|--------|-------------|-----------------|
-| `static func <` | Defines less-than logic | O(1) |
-| `==` | Equatable conformance | O(1) |
-| `array.sort()` | Uses `<` for sorting | O(n log n) |
-
-### Using `sort(by:)` for Custom Comparators
-
-```swift
-let nums = [5, 3, 8]
-let sorted = nums.sorted(by: { $0 > $1 })
-```
-
-| Syntax | Description | Time Complexity |
-|--------|-------------|-----------------|
-| `sorted(by: <)` | Sorts using custom logic | O(n log n) |
-| `{ $0.property < $1.property }` | Custom comparator | O(1) per comparison |
-| `array.sorted()` | Sorts based on `Comparable` | O(n log n) |
