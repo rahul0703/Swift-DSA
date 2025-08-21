@@ -566,4 +566,391 @@ class Arrays {
       }
     }
   }
+  
+  /*
+   Leetcode 567: Permutation in String
+   */
+  func checkInclusion(_ s1: String, _ s2: String) -> Bool {
+    // Check if s2 is at least as long as s1, otherwise it can't contain s1
+    guard s2.count >= s1.count else {
+      return false
+    }
+    // Convert s1 and s2 to arrays for easier manipulation
+    let s1 = Array(s1)
+    let s2 = Array(s2)
+    // Initialize variables for the sliding window
+    var left = 0
+    var right = s1.count - 1
+    // Create dictionaries to keep track of the frequency of characters in s1 and the current substring of s2
+    var subString = [Character: Int]()
+    var current = [Character: Int]()
+    
+    // Initialize the dictionaries with the frequency of characters in the first substring of s2
+    for i in 0..<s1.count{
+      current[s1[i], default: 0] += 1
+      subString[s2[i], default: 0] += 1
+    }
+    
+    // Check if the dictionaries are equal, indicating that s1 is a substring of s2
+    if current == subString{
+      return true
+    }
+    
+    // Slide the window over s2 and update the dictionaries accordingly
+    while right != s2.count - 1{
+      left += 1
+      right += 1
+      subString[s2[left - 1], default: 0] -= 1
+      if subString[s2[left - 1], default: 0] == 0{
+        subString.removeValue(forKey: s2[left - 1])
+      }
+      subString[s2[right], default: 0] += 1
+      
+      // Check if the dictionaries are equal, indicating that s1 is a substring of s2
+      if current == subString{
+        return true
+      }
+    }
+    // If the while loop ends, s1 is not a substring of s2
+    return false
+  }
+  
+  /*
+   Leetcode 239: Sliding Window Maximum
+   Very important question.
+   */
+  func maxSlidingWindow(_ nums: [Int], _ k: Int) -> [Int] {
+    var ans = [Int]()
+    var stack = [(Int, Int)]()
+    var len = nums.count
+    
+    //edge case
+    if len < k {
+      return ans
+    }
+    
+    //fill stack for k
+    var idx = 0
+    for i in 0 ..< k {
+      var num = nums[i]
+      
+      while(stack.count > 0 && stack.last!.1 <= num) {
+        stack.removeLast()
+      }
+      stack.append((i,num))
+    }
+    ans.append(stack[idx].1)
+    
+    for i in k ..< len {
+      var num = nums[i]
+      
+      while(stack.count > 0 && stack.last!.1 <= num) {
+        stack.removeLast()
+      }
+      stack.append((i,num))
+      for j in stack {
+        if j.0 > i - k {
+          ans.append(j.1)
+          break
+        }
+      }
+    }
+    
+    return ans
+  }
+  
+  
+  /*
+   Leetcode 76: Minimum Window Substring
+   Very important question
+   Approach:
+   1. make a map for t -> A:1,B:1,C:1
+   2. Maintain a count variable count
+   3. Iterate over s and if char is present in map with value greater than 0 increase count.
+   4. As soon as count == len of t, we have found a substring and update answer.
+   5. We move left pointer to the right untill the count < len and keep updating the answer
+   6. Once count < len, we again start moving the right pointer.
+   */
+  func minWindow(_ s: String, _ t: String) -> String {
+    var tmap = [Character: Int]()
+    var windowMap = [Character: Int]()
+    var count = 0
+    let lenT = t.count
+    let lenS = s.count
+    
+    if lenS < lenT { return "" }
+    
+    for char in t {
+      tmap[char, default: 0] += 1
+    }
+    
+    let array = Array(s)
+    var left = 0
+    var minLength = Int.max
+    var startIndex = 0
+    var endIndex = -1
+    
+    for right in 0..<lenS {
+      let char = array[right]
+      if tmap[char] != nil {
+        windowMap[char, default: 0] += 1
+        
+        if windowMap[char]! <= tmap[char]! {
+          count += 1
+        }
+      }
+      
+      // Try to shrink while the window is valid
+      if count == lenT {
+        while left <= right {
+          let charAtStart = array[left]
+          
+          if tmap[charAtStart] != nil {
+            // Do NOT remove the char if doing so would make window invalid
+            if windowMap[charAtStart]! == tmap[charAtStart]! {
+              break
+            }
+            windowMap[charAtStart]! -= 1
+          }
+          left += 1
+        }
+        
+        if right - left + 1 < minLength {
+          minLength = right - left + 1
+          startIndex = left
+          endIndex = right
+        }
+      }
+    }
+    
+    if endIndex == -1 {
+      return ""
+    }
+    return String(array[startIndex...endIndex])
+  }
+  
+  /*
+   Leetcode 560: Subarray Sum Equals K
+   Classic prefix and suffix sum question
+   Approach:
+   1. Build a prefix sum array and store values in hashmap.
+   2. For every iteration, check if the sum - k is in hashmap.
+   3. If in hashmap, increase the answer count by value in hashmap against the sum - k
+   
+   //Edge case: the subarray can start from startIndex i.e. 0 so, make sure you increase ans by 1 if sum == k
+   */
+  func subarraySum(_ nums: [Int], _ k: Int) -> Int {
+    var prefixArray = [Int]()
+    var hmap = [Int:Int]()
+    var sum = 0
+    var ans = 0
+    for i in 0 ..< nums.count {
+      var num = nums[i]
+      sum += num
+      var req = sum - k
+      if let val = hmap[req] {
+        ans += val
+      }
+      if sum == k {
+        ans += 1
+      }
+      //Update answer
+      hmap[sum, default: 0] += 1
+    }
+    return ans
+  }
+  
+  /*
+   Leetcode 974: Subarray Sums Divisible by K
+   Important concept: normalizing the sum.
+   Approach:
+   1. Maintain a variable sum
+   2. Build a hashmap and store all the (sum values % k) in the map with count
+   example for [4,5,0,-2,-3,1] -> [4,4,4,2,4,0]
+   3. For every value, see if the num if divisible by K, if yes increment the count by 1
+   4. Now, for sum let say reminder is x, find count of x or normalize value of x in hashmap and increment ans by count
+   */
+  func subarraysDivByK(_ nums: [Int], _ k: Int) -> Int {
+    var sum = 0
+    var hmap = [Int: Int]()
+    var ans = 0
+    for num in nums {
+      sum += num
+      //Normalize the value
+      var mod = (sum % k + k) % k
+      if mod == 0 {
+        ans += 1
+      }
+      ans += hmap[mod, default: 0]
+      hmap[mod, default: 0] += 1
+    }
+    return ans
+  }
+  
+  /*
+   Leetcode 238: Product of Array Except Self
+   Approach: maintain prefix and suffix product arrays and for each index multiply prefix and suffix product.
+   */
+  func productExceptSelf(_ nums: [Int]) -> [Int] {
+    var n = nums.count
+    var prefixProduct = Array(repeating: 1, count: n)
+    var suffixProduct = Array(repeating: 1, count: n)
+    var answerArray = Array(repeating: 1, count: n)
+    var pre = 1
+    var after = 1
+    for i in 0 ..< n-1 {
+      pre = pre * nums[i]
+      prefixProduct[i+1] = pre
+    }
+    
+    for i in (1 ..< n).reversed() {
+      after = after * nums[i]
+      suffixProduct[i-1] = after
+    }
+    
+    for i in 0 ..< n {
+      answerArray[i] = prefixProduct[i] * suffixProduct[i]
+    }
+    return answerArray
+  }
+  
+  /*
+   Leetcode 525: Contiguous Array
+   Approach:
+   maintain 2 var, count-1 and count-0
+   Maintain a difference of count-1 - count-0 and insert the difference andnits counts to hashmap.
+   for every diff, check if the difference exists in hashmap.
+   if diff is 0 then increment by 1
+   example 1, 0,0,0,0,1,1,1,1, -> -1,-2,-3,-4,-3,-2,-1,0
+   example 2: 1,1,1,1,0 -> 1,2,3,4,3
+   */
+  func findMaxLength(_ nums: [Int]) -> Int {
+    var hmap = [Int: Int]()
+    var count1 = 0
+    var count0 = 0
+    var ans = 0
+    
+    for i in 0 ..< nums.count {
+      var num = nums[i]
+      if num == 0 {
+        count0 += 1
+      } else {
+        count1 += 1
+      }
+      
+      var diff = count1 - count0
+      if diff == 0 {
+        ans = i + 1
+      }
+      if let val = hmap[diff] {
+        ans = max(ans, i - val)
+      } else {
+        hmap[diff] = i
+      }
+    }
+    
+    return ans
+  }
+  
+  /*
+   Leetcode 42: Trapping Rain Water
+   Very important question.
+   Approach:
+   for each block we calulate how much water is there.
+   To calulate, we need left-max and right-max for index.
+   The water at particular block is min(leftMax, rightMax) - height.
+   */
+  func trap(_ height: [Int]) -> Int {
+    var len = height.count
+    //Edge case
+    if len <= 2 {
+      return 0
+    }
+    var leftArr = Array(repeating: 0, count: len)
+    var rightArr = Array(repeating: 0, count: len)
+    
+    var leftMax = 0
+    var rightMax = 0
+    
+    var leftIdx = 0
+    while leftIdx < len - 1 {
+      leftMax = max(leftMax, height[leftIdx])
+      leftArr[leftIdx+1] = leftMax
+      leftIdx += 1
+    }
+    
+    var rightIdx = len - 1
+    while rightIdx > 0 {
+      rightMax = max(rightMax, height[rightIdx])
+      rightArr[rightIdx - 1] = rightMax
+      rightIdx -= 1
+    }
+    
+    var ans = 0
+    for i in 0 ..< len {
+      var value = max(min(leftArr[i], rightArr[i]) - height[i], 0)
+      ans += value
+    }
+    return ans
+  }
+  
+  /*
+   Leetcode 11: Container With Most Water
+   */
+  func maxArea(_ height: [Int]) -> Int {
+    var len = height.count
+    var ans = 0
+    var left = 0
+    var right = len - 1
+    
+    
+    while left < right {
+      var val = (right - left) * min(height[left], height[right])
+      ans = max(val, ans)
+      
+      if height[left] <= height[right] {
+        left += 1
+      } else {
+        right -= 1
+      }
+    }
+    return ans
+  }
+  
+  /*
+   Leetcode 15: 3 Sum
+   Approach:
+   sort the array
+   loop over the array for 1st element and apply 2 pointer to find the other 2.
+   to remove duplicates, insert the pair in set
+   And
+   */
+  func threeSum(_ nums: [Int]) -> [[Int]] {
+    var nums = nums.sorted()
+    var hashset = Set<[Int]>()
+    
+    for i in 0 ..< nums.count - 2 {
+      var num1 = nums[i]
+      
+      var left = i + 1
+      var right = nums.count - 1
+      while(left < right) {
+        var num2 = nums[left]
+        var num3 = nums[right]
+        
+        if num1 + num2 + num3 == 0 {
+          //Found triplet
+          hashset.insert([num1, num2, num3])
+        }
+        if num1 + num2 + num3 <= 0 {
+          left += 1
+        } else {
+          right -= 1
+        }
+      }
+    }
+    return hashset.map { $0 }
+  }
+  
+  
 }
