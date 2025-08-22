@@ -692,4 +692,567 @@ class DP_level_1 {
     // print(dp)
     return dp[len1][len2]
   }
+  
+  /*
+   Leetcode 97: Interleaving String
+   Approach:
+   For 2 strings s1 and s2, and a string s3
+   if s1[i] == s3[i+j] then we take from s1 and incremente i += 1
+   if s2[j] == s3[i+j] then we take from s2 and increment j += 1
+   
+   If both s1[i] == s3[i+j] && s2[j] == s3[i+j] then we have to explore both paths.
+   We cannot use else as we need to explore both paths.
+   */
+  func isInterleave(_ s1: String, _ s2: String, _ s3: String) -> Bool {
+    var lenS1 = s1.count
+    var lenS2 = s2.count
+    var len = s3.count
+    
+    if lenS1 + lenS2 != len {
+      return false
+    }
+    
+    var array1 = Array(s1)
+    var array2 = Array(s2)
+    var array3 = Array(s3)
+    var dp: [[Bool?]] = Array(repeating: Array<Bool?>(repeating: nil, count: lenS2+1), count: lenS1+1)
+    
+    func recursion(_ i: Int, _ j: Int) -> Bool {
+      if i == lenS1 && j == lenS2 {
+        return true
+      }
+      
+      if dp[i][j] != nil {
+        return dp[i][j]!
+      }
+      
+      if i < lenS1 && array1[i] == array3[i+j] {
+        var ans = recursion(i+1, j)
+        if ans  {
+          dp[i][j] = true
+          return true
+        }
+      }
+      
+      if j < lenS2 && array2[j] == array3[i+j] {
+        var ans = recursion(i, j+1)
+        if ans  {
+          dp[i][j] = true
+          return true
+        }
+      }
+      dp[i][j] = false
+      return false
+      
+    }
+    
+    var ans = recursion(0, 0)
+    return ans
+  }
+  
+  /*
+   Leetcode 115: Distinct Subsequences  (Hard)
+   Approach:
+   Make a db on s.length+1 * t.length+1.
+   Meaning: for each cell, the meaning is "how many distinct subsequence we can make out of s[0 ... i] into t[0 ... j"
+   
+   Sample DP
+   here, we cannot make subsequece if s.length < t.length. So lower half will be 0
+   And, tp make an empty subsequence from any string only 1 way that i.e. don't include anything.
+   dp[i][j] = if s[i] == t[j] ? dp[i-1][j-1] + dp[i][j-1] : dp[i][j-1]
+   0   r   a   b   b   b   i   t
+   0   1   1   1   1   1   1   1   1
+   r
+   a
+   b
+   b
+   i
+   t
+   
+   Key note: we can use &+ to allow overflow in case of large numbers.
+   */
+  func numDistinct(_ s: String, _ t: String) -> Int {
+    var len1 = s.count
+    var len2 = t.count
+    var arrS = Array(s)
+    var arrT = Array(t)
+    
+    var dp = Array(repeating: Array(repeating: 0, count: len1 + 1), count: len2 + 1)
+    for i in 0 ... len2 {
+      for j in 0 ... len1 {
+        if i == 0 && j == 0 {
+          dp[i][j] = 1
+        } else if i == 0 {
+          dp[i][j] = 1
+        } else if j == 0 {
+          dp[i][j] = 0
+        } else {
+          var charS = arrS[j-1]
+          var charT = arrT[i-1]
+          
+          dp[i][j] = charS == charT ? dp[i-1][j-1] &+ dp[i][j-1] : dp[i][j-1]
+        }
+      }
+    }
+    
+    return dp[len2][len1]
+  }
+  
+  /*
+   Leetcode 139: Word Break
+   Approach:
+   we make a dp of length as s.count + 1
+   let say s = leetcode
+   dp: empty word will be always be in dict (assumed)
+   0 l e e t c o d e
+   t f f f t f f f t
+   */
+  func wordBreak(_ s: String, _ wordDict: [String]) -> Bool {
+    let n = s.count
+    let wordSet = Set(wordDict)
+    var dp = [Bool](repeating: false, count: n + 1)
+    dp[0] = true   // empty string can always be segmented
+    
+    let chars = Array(s)   // convert once, gives O(1) indexing
+    
+    for i in 1...n {
+      for j in 0..<i {
+        if dp[j] {
+          let word = String(chars[j..<i])   // substring s[j..<i]
+          if wordSet.contains(word) {
+            dp[i] = true
+            break   // no need to check smaller j
+          }
+        }
+      }
+    }
+    return dp[n]
+  }
+  
+  /*
+   Leetcode 140: Word Break II
+   */
+  func wordBreak(_ s: String, _ wordDict: [String]) -> [String] {
+    var len = s.count
+    var dp = Array(repeating: [String](), count: len)
+    var wordSet = Set(wordDict)
+    var array = Array(s)
+    
+    for i in 0..<len {
+      // Case: full prefix is a word
+      let fullPrefix = String(array[0...i])
+      if wordSet.contains(fullPrefix) {
+        dp[i].append(fullPrefix)
+      }
+      
+      // Check all earlier breaks
+      for j in 0..<i {
+        if dp[j].isEmpty { continue }
+        
+        let sub = String(array[(j+1)...i])
+        if wordSet.contains(sub) {
+          for sentence in dp[j] {
+            dp[i].append(sentence + " " + sub)
+          }
+        }
+      }
+    }
+    return dp[len - 1]
+  }
+  
+  /*
+   Leetcode 10: Regular Expression Matching
+   Very important question
+   */
+  func isMatch(_ s: String, _ p: String) -> Bool {
+    let sArr = Array(s)
+    let pArr = Array(p)
+    let m = sArr.count
+    let n = pArr.count
+    
+    // dp[i][j] = does s[0..<i] match p[0..<j]
+    var dp = Array(repeating: Array(repeating: false, count: n + 1), count: m + 1)
+    dp[0][0] = true  // empty string matches empty pattern
+    
+    // Fill first row: matches between empty s and pattern p
+    for j in 1...n {
+      if pArr[j - 1] == "*" && j >= 2 {
+        dp[0][j] = dp[0][j - 2]
+      }
+    }
+    
+    for i in 1...m {
+      for j in 1...n {
+        if pArr[j - 1] == "." || pArr[j - 1] == sArr[i - 1] {
+          // direct match or '.' wildcard
+          dp[i][j] = dp[i - 1][j - 1]
+        } else if pArr[j - 1] == "*" {
+          // two cases:
+          // 1. Treat '*' as 0 occurrences: dp[i][j-2]
+          dp[i][j] = dp[i][j - 2]
+          
+          // 2. Treat '*' as 1+ occurrences if preceding char matches
+          let prevChar = pArr[j - 2]
+          if prevChar == "." || prevChar == sArr[i - 1] {
+            dp[i][j] = dp[i][j] || dp[i - 1][j]
+          }
+        }
+      }
+    }
+    
+    return dp[m][n]
+  }
+  
+  /*
+   Leetcode 44: Wildcard Matching
+   let words be s: misissipi, p: m*s?*, yes
+   0 m * s ? p *
+   0   1 0 0 0 0 0 0
+   m   0 1 1 0 0 0 0
+   i   0 0 1 0 0 0 0
+   s   0 0 1
+   i   0
+   s   0
+   s   0
+   i   0
+   p   0
+   i   0
+   got the formula
+   for char: if != false, if == i-1, j-1
+   for ?: i-1,j-1
+   for *: i,j-1 || i-1,j
+   */
+  func isMatch(_ s: String, _ p: String) -> Bool {
+    var lenS = s.count
+    var lenP = p.count
+    var arrS = Array(s)
+    var arrP = Array(p)
+    var dp = Array(repeating: Array(repeating: false, count: lenP + 1), count: lenS + 1)
+    
+    //Base case
+    dp[0][0] = true
+    if lenS == 0 && lenP == 0 {
+      return true
+    }
+    if lenP == 0 {
+      return false
+    }
+    //Fill top row
+    for j in 1 ... lenP {
+      dp[0][j] = arrP[j-1] == "*" ? dp[0][j-1] : false
+    }
+    if lenS == 0 {
+      return dp[0][lenP]
+    }
+    for i in 1 ... lenS {
+      for j in 1 ... lenP {
+        var charP = arrP[j-1]
+        var charS = arrS[i-1]
+        
+        if charP == "?" || charS == charP {
+          dp[i][j] = dp[i-1][j-1]
+        } else if charP == "*" {
+          //When empty sequence
+          dp[i][j] = dp[i][j-1]
+          //When 1 or more sequence
+          dp[i][j] = dp[i][j] || dp[i-1][j]
+        }
+      }
+    }
+    
+    return dp[lenS][lenP]
+  }
+  
+  /*
+   Leetcode 416: Partition Equal Subset Sum
+   Classic target sum subset.
+   for every element we have 2 ops inluce/exclude.
+   1st: Check if the sum is even, if odd return false
+   2nd: make half and apply target sum subset.
+   */
+  func canPartition(_ nums: [Int]) -> Bool {
+    var len = nums.count
+    var sum = 0
+    for num in nums {
+      sum += num
+    }
+    if sum % 2 != 0 {
+      return false
+    }
+    var target = sum/2
+    var dp = Array(repeating: Array(repeating: false, count: target+1), count: len+1)
+    //base case
+    dp[0][0] = true
+    for i in 1 ... len {
+      dp[i][0] = true
+    }
+    
+    for i in 1 ... len {
+      for j in 1 ... target {
+        var value = nums[i-1]
+        
+        //inlcude
+        if j >= value {
+          dp[i][j] = dp[i-1][j-value]
+        }
+        //exclude
+        dp[i][j] = dp[i][j] || dp[i-1][j]
+      }
+    }
+    
+    return dp[len][target]
+  }
+  
+  /*
+   Leetcode 494: Target Sum
+   Very important question
+   */
+  func findTargetSumWays(_ nums: [Int], _ target: Int) -> Int {
+    var len = nums.count
+    var sum = nums.reduce(0) {$0 + $1}
+    var dp = Array(repeating: Array(repeating: -1, count: 2 * sum + 1), count: len)
+    
+    func memoization(_ idx: Int, _ target: Int, _ dp: inout [[Int]]) -> Int {
+      if idx == len {
+        return target == 0 ? 1 : 0
+      }
+      
+      let offset = sum + target
+      if offset < 0 || offset > 2 * sum {
+        return 0
+      }
+      
+      if dp[idx][sum + target] != -1 {
+        return dp[idx][sum + target]
+      }
+      
+      var num = nums[idx]
+      //include
+      var ans1 = memoization(idx + 1, target - num, &dp)
+      
+      //exclude
+      var ans2 = memoization(idx + 1, target + num, &dp)
+      
+      dp[idx][sum + target] = ans1 + ans2
+      return dp[idx][sum + target]
+    }
+    var ans = memoization(0, target, &dp)
+    return ans
+  }
+  
+  /*
+   Leetcode 474: Ones and Zeros
+   Imp question
+   */
+  func findMaxForm(_ strs: [String], _ m: Int, _ n: Int) -> Int {
+    
+    var dp = [State:Int]()
+    var len = strs.count
+    
+    struct State: Hashable {
+      let i: Int
+      let m: Int
+      let n: Int
+    }
+    
+    func memoization(_ idx: Int, _ m: Int, _ n: Int, _ dp: inout [State:Int]) -> Int {
+      if idx == len || m < 0 || n < 0{
+        return 0
+      }
+      
+      if let val = dp[State(i:idx, m:m, n:n)] {
+        return val
+      }
+      
+      var ones = strs[idx].filter { $0 == "1" }.count
+      var zeros = strs[idx].filter { $0 == "0" }.count
+      
+      //include
+      var include = 0
+      if m - zeros >= 0 && n - ones >= 0 {
+        include = memoization(idx + 1, m - zeros, n - ones, &dp) + 1
+      }
+      //exclude
+      var exclude = memoization(idx + 1, m, n, &dp)
+      
+      var ans = max(include, exclude)
+      dp[State(i:idx, m:m, n:n)] = ans
+      return ans
+    }
+    
+    var ans = memoization(0, m, n, &dp)
+    return ans
+  }
+  
+  /*
+   Leetcode 221: Maximal Square
+   formula: if arr[i][j] == 1 : min(arr[i-1][j-1], arr[i-1][j], arr[i][j-1]) + 1
+   */
+  
+  func maximalSquare(_ matrix: [[Character]]) -> Int {
+    var rows = matrix.count
+    var cols = matrix[0].count
+    
+    if rows == 0 && cols == 0 {
+      return 0
+    }
+    
+    var table = Array(repeating: Array(repeating: 0, count: cols), count: rows)
+    var maxSquare = 0
+    for i in 0 ..< rows {
+      if matrix[i][0] == "1" {
+        table[i][0] = 1
+        maxSquare = 1
+      }
+    }
+    for j in 0 ..< cols {
+      if matrix[0][j] == "1" {
+        table[0][j] = 1
+        maxSquare = 1
+      }
+    }
+    for row in 1 ..< rows {
+      for col in 1 ..< cols {
+        if matrix[row][col] == "1" {
+          table[row][col] = min(table[row-1][col-1], min(table[row][col-1], table[row-1][col])) + 1
+          maxSquare = max(maxSquare, table[row][col])
+        }
+      }
+    }
+    return maxSquare * maxSquare
+  }
+  
+  /*
+   Leetcode 312: Burst Balloons
+   Very important DP problem – interval DP using gap strategy
+   
+   Problem:
+   You are given an array `nums` where each element represents a balloon with some coin value.
+   When you burst a balloon `k`, you earn coins equal to:
+   nums[i - 1] * nums[k] * nums[j + 1]
+   where `i` and `j` are the adjacent balloons remaining after bursting `k`.
+   
+   Objective:
+   Maximize the number of coins collected by bursting all balloons in an optimal order.
+   
+   Approach:
+   
+   1. Define a 2D DP table `dp[i][j]`:
+   - dp[i][j] represents the maximum coins obtainable by bursting all balloons from index `i` to `j` (inclusive).
+   - We need to decide the **last balloon** to burst in subarray `i...j`, because once it's the last, its adjacent values are fixed.
+   
+   2. Use gap strategy to fill `dp[i][j]`:
+   - Outer loop: `gap` from 0 to n-1, representing window size.
+   - Inner loop: for each window starting at `i`, compute `j = i + gap`.
+   - Try all positions `k` from `i` to `j` as the last balloon to burst in that range.
+   
+   3. For each `k ∈ [i...j]`:
+   - Compute:
+   - `left = dp[i][k-1]` (if k > i) – coins from bursting balloons before `k`
+   - `right = dp[k+1][j]` (if k < j) – coins from bursting balloons after `k`
+   - `val = nums[i-1] * nums[k] * nums[j+1]`
+   (boundary balloons are considered to be 1 if out of bounds)
+   - Update:
+   - `dp[i][j] = max(dp[i][j], left + right + val)`
+   
+   4. Final result:
+   - After filling all gaps, the answer is stored in `dp[0][n-1]`, the full array range.
+   
+   Time Complexity:
+   - O(n³) due to 3 nested loops (gap, i, k)
+   Space Complexity:
+   - O(n²) for the 2D dp table
+   */
+  
+  func maxCoins(_ nums: [Int]) -> Int {
+    let n = nums.count
+    var dp = Array(repeating: Array(repeating: 0, count: n), count: n)
+    
+    for gap in 0..<n {
+      for i in 0..<(n - gap) {
+        let j = i + gap
+        var maxVal = 0
+        for k in i...j {
+          let left = (k == i) ? 0 : dp[i][k - 1]
+          let right = (k == j) ? 0 : dp[k + 1][j]
+          let val = (i == 0 ? 1 : nums[i - 1]) * nums[k] * (j == n - 1 ? 1 : nums[j + 1])
+          
+          maxVal = max(maxVal, left + right + val)
+        }
+        dp[i][j] = maxVal
+      }
+    }
+    
+    return dp[0][n - 1]
+  }
+  
+  /*
+   Leetcode 132: Palindrome Partitioning II
+   
+   Approach:
+   
+   This problem asks for the minimum number of cuts needed to partition a string
+   such that every substring in the partition is a palindrome.
+   
+   We solve this using dynamic programming in two main steps:
+   
+   1. Precompute Palindromic Substrings (boolTable):
+   - We create a 2D DP table `boolTable[i][j]` to store whether the substring s[i...j] is a palindrome.
+   - We fill the table diagonally using the "gap strategy":
+   - gap == 0: A single character is always a palindrome.
+   - gap == 1: A two-character substring is a palindrome if both characters are equal.
+   - gap >= 2: A substring s[i...j] is a palindrome if:
+   - The first and last characters are equal: `s[i] == s[j]`
+   - And the inner substring `s[i+1...j-1]` is also a palindrome → this is stored in `boolTable[i+1][j-1]`
+   - So: `boolTable[i][j] = s[i] == s[j] && boolTable[i+1][j-1]`
+   
+   2. Compute Minimum Cuts (countTable):
+   - We define `countTable[i]` as the minimum number of cuts needed to partition s[0...i] into palindromic substrings.
+   - If s[0...i] is itself a palindrome, then no cuts are needed → `countTable[i] = 0`
+   - Otherwise, we iterate through every possible partition point j ∈ [1...i]:
+   - If s[j...i] is a palindrome, we try a cut at j-1:
+   - The number of cuts becomes `countTable[j-1] + 1`
+   - We take the minimum of all such valid cuts for `countTable[i]`
+   
+   The final result is stored in `countTable[n-1]`, which gives the minimum number of cuts required to partition the full string into palindromes.
+   */
+  func minCut(_ s: String) -> Int {
+    var array = Array(s)
+    var len = s.count
+    var boolTable = Array(repeating: Array(repeating: false, count: len), count: len)
+    
+    //gap strategy
+    for gap in 0 ..< len {
+      for i in 0 ..< (len - gap) {
+        var j = gap + i
+        if i == j {
+          boolTable[i][j] = true
+        } else if j == i+1 {
+          boolTable[i][j] = array[i] == array[j] ? true : false
+        } else {
+          boolTable[i][j] = array[i] == array[j] ? boolTable[i+1][j-1] : false
+        }
+      }
+    }
+    
+    var countTable = Array(repeating: len-1, count: len)
+    countTable[0] = 0
+    
+    for i in 0 ..< len {
+      if boolTable[0][i] {
+        countTable[i] = 0
+        continue
+      }
+      var minCuts = Int.max
+      for j in 1 ... i {
+        //check if the part i.e. String(array[j ... i]) is palindrome or not.
+        if boolTable[j][i] {
+          var cuts = countTable[j-1] + 1
+          minCuts = min(minCuts, cuts)
+        }
+      }
+      countTable[i] = minCuts
+    }
+    return countTable[len - 1]
+  }
 }
