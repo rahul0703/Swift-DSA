@@ -1169,7 +1169,7 @@ class DP_level_1 {
     var dp = Array(repeating: Array(repeating: 0, count: n), count: n)
     
     for gap in 0..<n {
-      for i in 0..<(n - gap) {
+      for i in 0..<(len - gap - 1) {
         let j = i + gap
         var maxVal = 0
         for k in i...j {
@@ -1254,5 +1254,46 @@ class DP_level_1 {
       countTable[i] = minCuts
     }
     return countTable[len - 1]
+  }
+  
+  
+  /*
+   Leetcode 1547: Minimum Cost to Cut a Stick
+   0   1   3   4   5   7
+   0   0   0   3
+   1   0   0   0   3
+   3   0   0   0   0   2
+   4   0       0   0   0   3
+   5   0           0   0   0
+   7   0               0   0
+   
+   for 0-4 => we have options as 1->3 or 3->1
+   if 1->3 then answer will be 4 + 0-1 + 1-4
+   if 3->1 then answer will be 4 + 0-3 + 3-4
+   for 0-5
+   we have 5 + 0-1 + 1-5
+   5 + 0-3 + 3-5
+   5 + 0-4 + 4-5
+   
+   we use gap strategy
+   */
+  func minCost(_ n: Int, _ cuts: [Int]) -> Int {
+    var allCuts = [0] + cuts.sorted() + [n]
+    let len = allCuts.count
+    var dp = Array(repeating: Array(repeating: 0, count: len), count: len)
+    
+    for gap in 2..<len {
+      for i in 0..<(len - gap) {
+        let j = i + gap
+        var minCost = Int.max
+        for k in (i + 1)..<j {
+          let cost = dp[i][k] + dp[k][j] + (allCuts[j] - allCuts[i])
+          minCost = min(minCost, cost)
+        }
+        dp[i][j] = minCost
+      }
+    }
+    
+    return dp[0][len - 1]
   }
 }

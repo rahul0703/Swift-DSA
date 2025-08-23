@@ -213,5 +213,68 @@ class Stack {
   /*
    Question 6: Inflix evaluation
    */
+  func evaluateInfix(_ expr: String) -> Int {
+    var values = [Int]()          // Operand stack
+    var ops = [Character]()       // Operator stack
+    
+    func precedence(_ op: Character) -> Int {
+      switch op {
+      case "+", "-": return 1
+      case "*", "/": return 2
+      default: return 0
+      }
+    }
+    
+    func applyOp(_ op: Character, _ b: Int, _ a: Int) -> Int {
+      switch op {
+      case "+": return a + b
+      case "-": return a - b
+      case "*": return a * b
+      case "/": return a / b  // Integer division
+      default: return 0
+      }
+    }
+    
+    let tokens = Array(expr.filter { !$0.isWhitespace })  // remove spaces
+    var i = 0
+    
+    while i < tokens.count {
+      let token = tokens[i]
+      
+      if token.isNumber {
+        values.append(Int(String(token))!)  // directly convert char to int
+      } else if token == "(" {
+        ops.append(token)
+      } else if token == ")" {
+        while !ops.isEmpty && ops.last! != "(" {
+          let op = ops.removeLast()
+          let b = values.removeLast()
+          let a = values.removeLast()
+          values.append(applyOp(op, b, a))
+        }
+        ops.removeLast()  // remove '('
+      } else if "+-*/".contains(token) {
+        while !ops.isEmpty && precedence(ops.last!) >= precedence(token) {
+          let op = ops.removeLast()
+          let b = values.removeLast()
+          let a = values.removeLast()
+          values.append(applyOp(op, b, a))
+        }
+        ops.append(token)
+      }
+      
+      i += 1
+    }
+    
+    while !ops.isEmpty {
+      let op = ops.removeLast()
+      let b = values.removeLast()
+      let a = values.removeLast()
+      values.append(applyOp(op, b, a))
+    }
+    
+    return values.last ?? 0
+  }
+  
   
 }
