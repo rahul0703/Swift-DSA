@@ -107,7 +107,7 @@ class Greedy {
           break
         }
       }
-      if pointer > 0 {
+      if pointer > 0 { //Only add time if tasks are still remaining.
         time += interval
       }
       for node in array {

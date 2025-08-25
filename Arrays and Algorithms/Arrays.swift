@@ -106,7 +106,8 @@ class Arrays {
   
   /*
    Leetcode 33: Search in Rotated and Sorted Array
-   Approach: 1. For every half, one side will be sorted and other will not be.
+   Approach:
+   1. For every half, one side will be sorted and other will not be.
    2. Find the sorted half and check if the target lies in the sorted half
    */
   func search(_ n: [Int], _ t: Int) -> Int {
@@ -153,6 +154,7 @@ class Arrays {
     var length = arr.count
     var lhs = 0
     var rhs = length - 1
+    //Base case
     if length == 1 {
       return arr[0]
     }
@@ -197,6 +199,7 @@ class Arrays {
   
   /*
    Find peak element in an array.
+   Note: we don't have to find the largest element, just a local peak element.
    Approach: The left side of peak element will have elements in increasing order and right side will have elements in dec order.
    we can use this to eleminate the search space.
    */
@@ -422,7 +425,7 @@ class Arrays {
   
   /*
    Distrubte n books to m students such that the maximum number of pages assigned to a student is minimized.
-   Approach: The min pages assigned to a student will be 1 and max will be sum
+   Approach: The min pages assigned to a student will be max(array) and max will be sum
    Lets the array for books be [10, 20, 30, 25, 15, 40, 50, 60, 70, 80] and students be 4.
    lets we distrubute the books as follows: 1st- 10 and 20, 2nd- 30, 3rd=25,15, 4th-40,50,60,70,80
    Here, the max pages assigned is 300, but we need to minimize this maximum number.

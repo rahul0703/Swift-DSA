@@ -260,6 +260,8 @@ class GraphLeetCode {
   
   /*
    Question leetcode 207: Course Schedule
+   Desc: There are a total of numCourses courses you have to take, labeled from 0 to numCourses-1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.
+   Approach: Use Kahn's algorithm to detect cycle in directed graph
    */
   func canFinish(_ numCourses: Int, _ prerequisites: [[Int]]) -> Bool {
     var graph: [[Int]] = Array(repeating: [], count: numCourses)
@@ -293,6 +295,12 @@ class GraphLeetCode {
   
   /*
    Leetcode 269: Alien Dictionary
+   Desc: There is a new alien language which uses the English alphabet. However, the order among letters are unknown to you. You receive a list of non-empty words from the dictionary, where words are sorted lexicographically by the rules of this new language. Derive the order of letters in this language.
+   Approach:
+    1. Build a graph using adjacent word pairs to determine character order
+    2. Perform topological sort (Kahn's algorithm) to find valid character order
+    Edge Cases:
+    - Prefix violation (e.g., "abc" before "ab") → invalid order
    */
   func alienOrder(_ words: [String]) -> String {
     var graph = [Character: [Character]]()
@@ -406,12 +414,13 @@ class GraphLeetCode {
   
   /*
    Leetcode 1928: Minimum Cost to Reach Destination in Time
+   Approach: Dijkstra's algorithm with a priority queue to explore the least-cost paths within the time constraint.
    Very important question
    */
   func minCost(_ maxTime: Int, _ edges: [[Int]], _ passingFees: [Int]) -> Int {
     var graph: [Int: [(Int, Int)]] = [:]
     var n = passingFees.count
-    var pq = PriorityQueueCustom<(Int, Int, Int)> {
+    var pq = PriorityQueueCustom<(Int, Int, Int)> { // (node, cost, time)
       if $0.1 == $1.1 {
         return $0.2 < $1.2
       }

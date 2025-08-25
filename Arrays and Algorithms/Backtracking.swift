@@ -368,7 +368,6 @@ class Backtracking {
     if len < 4 {
       return ans
     }
-    
     func isValidStringFinal(_ str: String) -> Bool {
       let parts = str.split(separator: ".", omittingEmptySubsequences: false)
       for part in parts {
@@ -393,7 +392,6 @@ class Backtracking {
       if count > 3 {
         return
       }
-      
       var firstHalf = String(str.prefix(idx+count))
       var secondHalf = String(str.dropFirst(idx+count))
       var newString = firstHalf + "." + secondHalf

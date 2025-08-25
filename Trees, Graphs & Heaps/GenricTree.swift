@@ -62,6 +62,7 @@ class GenricTree {
   
   /*
    Question Leetcode 582: Kill Process (Process Tree) ✅ Google tag
+   Desc: You have n processes forming a rooted tree structure. You are given two integer arrays pid and ppid, where pid[i] is the ID of the ith process and ppid[i] is the ID of the ith process's parent process. The only process that has no parent process is the root process, whose ppid is 0. Each process can have multiple children processes, but no process can be its own ancestor. You are also given an integer kill, which is the ID of a process you want to kill. When a process is killed, all of its children processes should
    */
   func killProcess(_ pid: [Int], _ ppid: [Int], _ kill: Int) -> [Int] {
     var map = [Int: Node]()
