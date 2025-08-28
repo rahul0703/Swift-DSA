@@ -1296,4 +1296,73 @@ class DP_level_1 {
     
     return dp[0][len - 1]
   }
+  
+  /*
+   Leetcode 188: Best Time to Buy and Sell Stock IV
+   2   4   1
+   0   0   0   0
+   1   0   2   2
+   2   0   2   2
+   
+   3   2   6   5   0   3
+   0   0   0   0   0   0   0
+   1   0   0   4   4   4   4
+   2   0   0   4   4   4   7
+   
+   formula: for k in 0:j-1 {
+   of maxProfit = max(maxProfit, dp[i-1][k] + price[j] - price[k])
+   totalMaxProfit = max(maxProfit, dp[i][j-1])
+   }
+   
+   Now, we can even reduce the loop of k by maintaining a maxValue variable.
+   Just store, the dp[i-1][k] - price[k] in maxValue and use it in the formula.
+   */
+  func maxProfit(_ k: Int, _ p: [Int]) -> Int {
+    var dp = Array(repeating: Array(repeating: 0, count: p.count), count: k + 1)
+    for i in 1 ... k {
+      var maxValue = Int.min
+      for j in 1 ..< p.count {
+        maxValue = max(maxValue, dp[i-1][j-1] - p[j-1])
+        dp[i][j] = max(dp[i][j-1], maxValue + p[j])
+      }
+    }
+    return dp[k][p.count-1]
+  }
+  
+  /*
+   Leetcode 337: House Robber III
+   */
+  func rob(_ root: TreeNode?) -> Int {
+    if root == nil {
+      return 0
+    }
+    func getMaxProfit(_ root: TreeNode?) -> (Int, Int) {
+      guard let node = root else { return (0,0) }
+      
+      var (leftInclude, leftExclude) = getMaxProfit(node.left)
+      var (rightInclude, rightExclude) = getMaxProfit(node.right)
+      
+      var include = leftExclude + rightExclude + node.val
+      var exclude = max(leftInclude, leftExclude) + max(rightInclude, rightExclude)
+      
+      return (include, exclude)
+    }
+    var (include, exclude) = getMaxProfit(root)
+    return max(include, exclude)
+  }
+  
+  
+  
+  public class TreeNode {
+    public var val: Int
+    public var left: TreeNode?
+    public var right: TreeNode?
+    public init() { self.val = 0; self.left = nil; self.right = nil; }
+    public init(_ val: Int) { self.val = val; self.left = nil; self.right = nil; }
+    public init(_ val: Int, _ left: TreeNode?, _ right: TreeNode?) {
+      self.val = val
+      self.left = left
+      self.right = right
+    }
+  }
 }

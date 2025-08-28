@@ -42,7 +42,7 @@ class Graph {
   }
   
   /*
-    Question: Get connected components of the graph
+   Question: Get connected components of the graph
    */
   func getConnectedComponents(_ graph: [[Int]]) -> [[Int]] {
     var result: [[Int]] = []
@@ -402,10 +402,10 @@ class Graph {
   /*
    Topological sort Iterative using Kahn's algorithm
    Approach:
-    1. Fill a array based on degree of each node. Where degree is number of incoming edges.
-    2. Use a queue to process nodes with zero incoming edges and reduce the degree of their ngrs. If the ngr degree is 0 then append into queue and add the count.
-    3. Repeat until the queue is empty.
-    4. If, queue is empty and not all nodes are processed (count != n) then cycle is present.
+   1. Fill a array based on degree of each node. Where degree is number of incoming edges.
+   2. Use a queue to process nodes with zero incoming edges and reduce the degree of their ngrs. If the ngr degree is 0 then append into queue and add the count.
+   3. Repeat until the queue is empty.
+   4. If, queue is empty and not all nodes are processed (count != n) then cycle is present.
    */
   func kahnsTopologicalSort(_ graph: [[Int]]) -> [Int] {
     var count = graph.count
@@ -444,9 +444,9 @@ class Graph {
   /*
    Question: Find the minimum number of edge swap to reach from source to estination in a directed graaph.
    Solution:
-      1. We need to make the directed graph into undirected graph. To do so, we need to add a reverse edge with cost 1.
-      2. Use Dijkstra's algorithm to find the shortest path from source to destination.
-      3. But, if you notice the edge weights are either 0 or 1, so we can use 0-1 BFS to find the shortest path.
+   1. We need to make the directed graph into undirected graph. To do so, we need to add a reverse edge with cost 1.
+   2. Use Dijkstra's algorithm to find the shortest path from source to destination.
+   3. But, if you notice the edge weights are either 0 or 1, so we can use 0-1 BFS to find the shortest path.
    */
   func minEdgeSwapToReachDesitiation(_ graph: [[Int]], _ source: Int, _ destination: Int) -> Int {
     var size = graph.count
@@ -467,7 +467,7 @@ class Graph {
     while !queue.isEmpty {
       var poppedNode = queue.removeFirst()
       if visited[node] {
-          continue
+        continue
       }
       visited[poppedNode.0] = true // Mark the node as visited
       if poppedNode.0 == destination {
@@ -490,10 +490,10 @@ class Graph {
   /*
    Minimum Spanning Tree using Krushkal's Algorithm
    Approcach:
-    1. Sort the edges based on their weights.
-    2. Use a union-find data structure to keep track of connected components.
-    3. Iterate through the sorted edges and add them to the MST.
-    4. Add thw weights of the edges to the total cost.
+   1. Sort the edges based on their weights.
+   2. Use a union-find data structure to keep track of connected components.
+   3. Iterate through the sorted edges and add them to the MST.
+   4. Add thw weights of the edges to the total cost.
    */
   func MSTWithKrushkalAlgorithm(_ graph: [[Int]]) -> Int {
     //graph[i] = [u, v, weight]
@@ -569,6 +569,124 @@ class Graph {
     }
     return nil
   }
+  
+  
+  /*
+   Detect all cycles in a directed graph.
+   Very important question!
+   */
+  func findAllCycles(_ connections: [Connection]) -> [[String]] {
+    func buildGraphs(_ connections: [Connection]) -> (graph: [String: [String]], reverse: [String: [String]]) {
+      var graph = [String: [String]]()
+      var reverse = [String: [String]]()
+      
+      for conn in connections {
+        graph[conn.from, default: []].append(conn.to)
+        reverse[conn.to, default: []].append(conn.from)
+      }
+      
+      return (graph, reverse)
+    }
+    func kosarajuSCC(_ graph: [String: [String]], _ reverse: [String: [String]]) -> [[String]] {
+      var visited = Set<String>()
+      var stack = [String]()
+      
+      func dfs1(_ node: String) {
+        visited.insert(node)
+        for neighbor in graph[node] ?? [] {
+          if !visited.contains(neighbor) {
+            dfs1(neighbor)
+          }
+        }
+        stack.append(node)
+      }
+      
+      for node in graph.keys {
+        if !visited.contains(node) {
+          dfs1(node)
+        }
+      }
+      
+      visited.removeAll()
+      var sccList = [[String]]()
+      
+      func dfs2(_ node: String, _ current: inout [String]) {
+        visited.insert(node)
+        current.append(node)
+        for neighbor in reverse[node] ?? [] {
+          if !visited.contains(neighbor) {
+            dfs2(neighbor, &current)
+          }
+        }
+      }
+      
+      while let node = stack.popLast() {
+        if !visited.contains(node) {
+          var component = [String]()
+          dfs2(node, &component)
+          sccList.append(component)
+        }
+      }
+      
+      return sccList
+    }
+    func findCycles(in scc: [String], graph: [String: [String]]) -> Set<[String]> {
+      var result = Set<[String]>()
+      
+      var path = [String]()
+      var visited = Set<String>()
+      
+      func dfs(_ node: String, _ origin: String) {
+        path.append(node)
+        visited.insert(node)
+        
+        for neighbor in graph[node] ?? [] {
+          if neighbor == origin {
+            result.insert(normalize(path + [origin]))
+          } else if !visited.contains(neighbor) && scc.contains(neighbor) {
+            dfs(neighbor, origin)
+          }
+        }
+        
+        path.removeLast()
+        visited.remove(node)
+      }
+      
+      for node in scc {
+        dfs(node, node)
+      }
+      
+      return result
+    }
+    func normalize(_ cycle: [String]) -> [String] {
+      guard let minIndex = cycle.indices.min(by: { cycle[$0] < cycle[$1] }) else {
+        return cycle
+      }
+      
+      let rotated = Array(cycle[minIndex..<cycle.count - 1] + cycle[0...minIndex])
+      return rotated
+    }
+    
+    
+    let (graph, reverse) = buildGraphs(connections)
+    let sccList = kosarajuSCC(graph, reverse)
+    
+    var allCycles = Set<[String]>()
+    
+    for scc in sccList where scc.count > 1 {
+      let cycles = findCycles(in: scc, graph: graph)
+      for cycle in cycles {
+        allCycles.insert(cycle)
+      }
+    }
+    
+    return Array(allCycles)
+  }
+  struct Connection {
+    let from: String
+    let to: String
+  }
+  
 }
 
 

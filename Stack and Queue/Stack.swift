@@ -213,7 +213,7 @@ class Stack {
   /*
    Question 6: Inflix evaluation
    */
-  func evaluateInfix(_ expr: String) -> Int {
+  func calculate(_ s: String) -> Int {
     var values = [Int]()          // Operand stack
     var ops = [Character]()       // Operator stack
     
@@ -235,16 +235,22 @@ class Stack {
       }
     }
     
-    let tokens = Array(expr.filter { !$0.isWhitespace })  // remove spaces
+    let tokens = Array(s.filter { !$0.isWhitespace })  // remove spaces
     var i = 0
     
     while i < tokens.count {
       let token = tokens[i]
-      
       if token.isNumber {
-        values.append(Int(String(token))!)  // directly convert char to int
+        var numStr = ""
+        while i < tokens.count && tokens[i].isNumber {
+          numStr.append(tokens[i])
+          i += 1
+        }
+        var num = Int(numStr)!
+        values.append(num)
       } else if token == "(" {
         ops.append(token)
+        i += 1
       } else if token == ")" {
         while !ops.isEmpty && ops.last! != "(" {
           let op = ops.removeLast()
@@ -253,6 +259,7 @@ class Stack {
           values.append(applyOp(op, b, a))
         }
         ops.removeLast()  // remove '('
+        i += 1
       } else if "+-*/".contains(token) {
         while !ops.isEmpty && precedence(ops.last!) >= precedence(token) {
           let op = ops.removeLast()
@@ -261,9 +268,8 @@ class Stack {
           values.append(applyOp(op, b, a))
         }
         ops.append(token)
+        i += 1
       }
-      
-      i += 1
     }
     
     while !ops.isEmpty {
@@ -276,5 +282,185 @@ class Stack {
     return values.last ?? 0
   }
   
+  /*
+   Leetcode 150: Evaluate Reverse Polish Notation
+   */
+  func evalRPN(_ tokens: [String]) -> Int {
+    var operands = [Int]()
+    var operators = [String]()
+    
+    func applyOp(_ op: String, _ b: Int, _ a: Int) -> Int {
+      switch op {
+      case "+": return a + b
+      case "-": return a - b
+      case "*": return a * b
+      case "/": return a / b  // Integer division
+      default: return 0
+      }
+    }
+    for char in tokens {
+      if let num = Int(char) {
+        operands.append(num)
+      } else {
+        var b = operands.removeLast()
+        var a = operands.removeLast()
+        
+        var ans = applyOp(char, b, a)
+        operands.append(ans)
+      }
+    }
+    
+    return operands.removeLast()
+  }
   
+  /*
+   Leetcode 224: Basic Calculator
+   Very important question.
+   Check the negative number handling part.
+   We have uniary number 0 before the negative sign.
+   */
+  func calculate(_ s: String) -> Int {
+    func calculate(_ opr: Character, _ a: Int, _ b: Int) -> Int {
+      switch opr {
+      case "+": return a + b
+      case "-": return a - b
+      default: return 0
+      }
+    }
+    var array = Array(s)
+    var operands = [Int]()
+    var operators = [Character]()
+    
+    var i = 0
+    while i < array.count {
+      var char = array[i]
+      if char == " " {
+        i += 1
+        continue
+      } else if char.isNumber {
+        var numStr = ""
+        while i < array.count && array[i].isNumber {
+          numStr.append(array[i])
+          i += 1
+        }
+        var num = Int(numStr)!
+        operands.append(num)
+      } else {
+        if char == "(" {
+          operators.append(char)
+        } else if char == "+" || char == "-" {
+          //Handle negative number
+          var j = i - 1
+          while j >= 0 && array[j] == " " {
+            j -= 1
+          }
+          if j < 0 || array[j] == "(" {
+            operands.append(0)
+          }
+          
+          if !operators.isEmpty && (operators.last! == "+" || operators.last! == "-") {
+            var b = operands.removeLast()
+            var a = operands.removeLast()
+            var opr = operators.removeLast()
+            var ans = calculate(opr, a, b)
+            operands.append(ans)
+          }
+          operators.append(char)
+        } else {
+          while operators.last! != "(" {
+            var b = operands.removeLast()
+            var a = operands.removeLast()
+            var opr = operators.removeLast()
+            var ans = calculate(opr, a, b)
+            operands.append(ans)
+          }
+          //Remove the opening bracket
+          operators.removeLast()
+        }
+        i += 1
+      }
+    }
+    while !operators.isEmpty {
+      var b = operands.removeLast()
+      var a = operands.removeLast()
+      var opr = operators.removeLast()
+      var ans = calculate(opr, a, b)
+      operands.append(ans)
+    }
+    
+    return operands.removeLast()
+  }
+  
+  
+  /*
+   Leetcode 907: Sum of Subarray Minimums
+   Very Very Important question
+   
+   For every element i in array
+   Lets say for [3,1,2,4]
+   arr[i] = 1
+   
+   now, number of subarrays where arr[i] is minimum is = left * right
+   where
+    left: no. of subarrays ending at i
+    right: no. of subarrays starting at i
+   
+   Now, how do we calculate the left and right
+   Simple:
+    left = i - index(left smaller elemement)
+    right = index(right smaller element) - i
+   
+   For our case, 1 is minimum so, left = 1 - (-1) = 2,
+                                  right = 4 - 1 = 3
+   so, left * right = 2*3 = 6 as [1],[1,2],[1,2,4],[3,1],[3,1,2],[3,1,2,4]
+   
+   
+   */
+  func sumSubarrayMins(_ arr: [Int]) -> Int {
+    let MOD = 1_000_000_007
+    var leftMin = [Int]()
+    var rightMin = [Int]()
+    
+    var stack = [Int]()
+    
+    for i in 0 ..< arr.count {
+      var val = arr[i]
+      while !stack.isEmpty && arr[stack.last!] > val {
+        stack.removeLast()
+      }
+      if stack.isEmpty {
+        leftMin.append(-1)
+      } else {
+        leftMin.append(stack.last!)
+      }
+      stack.append(i)
+    }
+    
+    stack = []
+    for i in (0 ..< arr.count).reversed() {
+      var val = arr[i]
+      while !stack.isEmpty && arr[stack.last!] >= val {
+        stack.removeLast()
+      }
+      if stack.isEmpty {
+        rightMin.append(arr.count)
+      } else {
+        rightMin.append(stack.last!)
+      }
+      stack.append(i)
+    }
+    rightMin.reverse()
+    var sum = 0
+    //Contribution of arr[i] = left * right * arr[i]
+    for i in 0 ..< arr.count {
+      var left = i - leftMin[i]
+      var right = rightMin[i] - i
+      var num = arr[i]
+      let contribution = ((left % MOD) * (right % MOD)) % MOD
+      let total = (contribution * (num % MOD)) % MOD
+      sum = (sum + total) % MOD
+    }
+    
+    return sum
+  }
 }

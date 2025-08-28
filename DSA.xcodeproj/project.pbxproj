@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		DF2D7FAC2E6096D70084844F /* Hashmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hashmap.swift; sourceTree = "<group>"; };
 		DFC82C672E5591E5001B0463 /* CustomHashMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHashMap.swift; sourceTree = "<group>"; };
 		DFDE530A2E3F1F9000BE894C /* Swift_DataStructures_CheatSheet.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Swift_DataStructures_CheatSheet.md; sourceTree = "<group>"; };
 		DFDEBDC92E41008000BE894C /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
@@ -80,6 +81,7 @@
 		DFF80E3E2E4B36C600CB343F /* Heaps and PriorityQueue */ = {
 			isa = PBXGroup;
 			children = (
+				DF2D7FAC2E6096D70084844F /* Hashmap.swift */,
 				DFDEBDCD2E41CE3100BE894C /* PriorityQueueCustom.swift */,
 			);
 			path = "Heaps and PriorityQueue";

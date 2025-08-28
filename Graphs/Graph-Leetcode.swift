@@ -297,10 +297,10 @@ class GraphLeetCode {
    Leetcode 269: Alien Dictionary
    Desc: There is a new alien language which uses the English alphabet. However, the order among letters are unknown to you. You receive a list of non-empty words from the dictionary, where words are sorted lexicographically by the rules of this new language. Derive the order of letters in this language.
    Approach:
-    1. Build a graph using adjacent word pairs to determine character order
-    2. Perform topological sort (Kahn's algorithm) to find valid character order
-    Edge Cases:
-    - Prefix violation (e.g., "abc" before "ab") → invalid order
+   1. Build a graph using adjacent word pairs to determine character order
+   2. Perform topological sort (Kahn's algorithm) to find valid character order
+   Edge Cases:
+   - Prefix violation (e.g., "abc" before "ab") → invalid order
    */
   func alienOrder(_ words: [String]) -> String {
     var graph = [Character: [Character]]()
@@ -710,11 +710,11 @@ class GraphLeetCode {
    Leetcode 1036: Escape a Large Maze
    very important question
    Intution:
-    1. Blocked noded length is 200 so, at max they can block 200*(200-1)/2 = 19900 nodes.
-    2. We just need to check,
-        a. If souce to target is reachble than return true
-        b. Or, if we can move more than 19900 moves from both source and target than both are not surrounded and return true.
-        c. If any of the source or target is sourrounded and source to target no path exists then return false.
+   1. Blocked noded length is 200 so, at max they can block 200*(200-1)/2 = 19900 nodes.
+   2. We just need to check,
+   a. If souce to target is reachble than return true
+   b. Or, if we can move more than 19900 moves from both source and target than both are not surrounded and return true.
+   c. If any of the source or target is sourrounded and source to target no path exists then return false.
    */
   func isEscapePossible(_ blocked: [[Int]], _ source: [Int], _ target: [Int]) -> Bool {
     var blockedNodes = Set<Node>()
@@ -770,6 +770,49 @@ class GraphLeetCode {
       self.x = x
       self.y = y
     }
+  }
+  
+  /*
+   Leetcode 329: Longest Increasing Path in a Matrix
+   */
+  func longestIncreasingPath(_ matrix: [[Int]]) -> Int {
+    let rows = matrix.count
+    let cols = matrix[0].count
+    let directions = [(1,0), (-1,0), (0,1), (0,-1)]
+    var memo = Array(repeating: Array(repeating: 0, count: cols), count: rows)
+    
+    func dfs(_ row: Int, _ col: Int) -> Int {
+      // If already computed, return memoized result
+      if memo[row][col] != 0 {
+        return memo[row][col]
+      }
+      
+      let currentValue = matrix[row][col]
+      var maxLength = 1 // Minimum path length is 1 (the cell itself)
+      
+      for dir in directions {
+        let newRow = row + dir.0
+        let newCol = col + dir.1
+        
+        // Check bounds and strictly increasing condition
+        if newRow >= 0, newRow < rows, newCol >= 0, newCol < cols,
+           matrix[newRow][newCol] > currentValue {
+          maxLength = max(maxLength, 1 + dfs(newRow, newCol))
+        }
+      }
+      
+      memo[row][col] = maxLength
+      return maxLength
+    }
+    
+    var result = 0
+    for r in 0..<rows {
+      for c in 0..<cols {
+        result = max(result, dfs(r, c))
+      }
+    }
+    
+    return result
   }
 }
 
