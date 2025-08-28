@@ -209,12 +209,14 @@ deque.prepend(0)                      // Add to front
 
 ### ❌ Removal Methods
 ```swift
+Gives non optional values, so ensure deque is not empty before calling.
 let last = deque.removeLast()         // O(1)
 let first = deque.removeFirst()       // O(1)
 ```
 
 ### 👀 Peek Methods
 ```swift
+Give optional values.
 let front = deque.first
 let back = deque.last
 ```
