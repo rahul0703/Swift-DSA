@@ -1,119 +1,96 @@
-//
-//  CustomHashMap.swift
-//  DSA
-//
-//  Created by Rahul Sureka on 20/08/25.
-//
 
-import Foundation
 
-// Swift 5+
-// HashMap with separate chaining using array "lists" per bucket.
-
-public final class HashMap<Key: Hashable, Value> {
-  // MARK: - Node (like HMnode in Java)
-  private struct HMNode {
-    let key: Key
-    var value: Value
+class HashMap<K: Hashable, V> {
+  // A single key-value pair
+  private typealias Entry = (key: K, value: V)
+  
+  // Array of buckets (each bucket is an array of entries, to handle collisions)
+  private var buckets: [[Entry]]
+  
+  // Current capacity (number of buckets)
+  private var capacity: Int
+  
+  // Number of key-value pairs stored
+  private(set) var count: Int = 0
+  
+  // Threshold to trigger resizing (e.g. 75% full)
+  private let loadFactor: Double = 0.75
+  
+  // Initialize with default capacity (can be passed too)
+  init(initialCapacity: Int = 16) {
+    self.capacity = initialCapacity
+    self.buckets = Array(repeating: [], count: capacity)
   }
   
-  // MARK: - Storage
-  private var buckets: [[HMNode]]
-  private(set) public var size: Int = 0
-  
-  // MARK: - Init
-  public init(initialCapacity: Int = 4) {
-    precondition(initialCapacity > 0, "Capacity must be > 0")
-    self.buckets = Array(repeating: [], count: initialCapacity)
-  }
-  
-  // MARK: - Hashing & bucket helpers
-  private func hashFunction(_ key: Key) -> Int {
-    // Make hash non-negative and map to a bucket index
-    return Int(UInt(bitPattern: key.hashValue) % UInt(buckets.count))
-  }
-  
-  // Returns index within bucket if found, else nil
-  private func findWithinBucket(_ bi: Int, _ key: Key) -> Int? {
-    for (di, node) in buckets[bi].enumerated() {
-      if node.key == key { return di }
-    }
-    return nil
-  }
-  
-  // MARK: - API (mirrors your Java methods)
-  
-  public func get(_ key: Key) -> Value? {
-    let bi = hashFunction(key)
-    if let di = findWithinBucket(bi, key) {
-      return buckets[bi][di].value
-    }
-    return nil
-  }
-  
-  public func put(key: Key, value: Value) {
-    let bi = hashFunction(key)
-    if let di = findWithinBucket(bi, key) {
-      // update
-      buckets[bi][di].value = value
-    } else {
-      // insert
-      buckets[bi].append(HMNode(key: key, value: value))
-      size += 1
-    }
+  // Insert or update a value
+  func put(_ key: K, _ value: V) {
+    let index = bucketIndex(for: key)  // Determine the correct bucket
     
-    // load factor check (lambda > 2.0) -> rehash
-    let lambda = Double(size) / Double(buckets.count)
-    if lambda > 2.0 {
-      rehash()
-    }
-  }
-  
-  public func containsKey(_ key: Key) -> Bool {
-    let bi = hashFunction(key)
-    return findWithinBucket(bi, key) != nil
-  }
-  
-  @discardableResult
-  public func remove(_ key: Key) -> Value? {
-    let bi = hashFunction(key)
-    guard let di = findWithinBucket(bi, key) else { return nil }
-    let removed = buckets[bi].remove(at: di).value
-    size -= 1
-    return removed
-  }
-  
-  // MARK: - Rehash (double bucket count)
-  private func rehash() {
-    let oldBuckets = buckets
-    buckets = Array(repeating: [], count: max(1, oldBuckets.count * 2))
-    size = 0
-    
-    for bucket in oldBuckets {
-      for node in bucket {
-        put(key: node.key, value: node.value)
+    // Check if key already exists — if so, update value
+    for i in 0..<buckets[index].count {
+      if buckets[index][i].key == key {
+        buckets[index][i].value = value
+        return  // Update done
       }
     }
-  }
-  
-  // MARK: - Utilities (like display, size, isEmpty, keySet)
-  public func display() {
-    print("``````````````````````````````````")
-    for i in 0..<buckets.count {
-      let items = buckets[i].map { "{\($0.key)=\($0.value)}" }.joined(separator: ", ")
-      print("B\(i)- \(items)")
+    
+    // Key not found — insert new entry
+    buckets[index].append((key, value))
+    count += 1
+    
+    // If load factor exceeded, double the size
+    if Double(count) / Double(capacity) > loadFactor {
+      resize()
     }
   }
   
-  public func isEmpty() -> Bool { size == 0 }
-  
-  public func keySet() -> [Key] {
-    var keys: [Key] = []
-    keys.reserveCapacity(size)
-    for bucket in buckets {
-      for node in bucket { keys.append(node.key) }
+  // Retrieve value by key
+  func get(_ key: K) -> V? {
+    let index = bucketIndex(for: key)
+    
+    // Search for key in bucket
+    for entry in buckets[index] {
+      if entry.key == key {
+        return entry.value  // Found
+      }
     }
-    return keys
+    
+    return nil  // Not found
+  }
+  
+  // Remove key-value pair if present
+  func remove(_ key: K) {
+    let index = bucketIndex(for: key)
+    
+    // Remove all matches of the key from the bucket
+    buckets[index].removeAll { $0.key == key }
+    count -= 1
+  }
+  
+  // Check if key exists
+  func containsKey(_ key: K) -> Bool {
+    return get(key) != nil
+  }
+  
+  // Convert hash value to a valid bucket index
+  private func bucketIndex(for key: K) -> Int {
+    return abs(key.hashValue) % capacity
+  }
+  
+  // Resize buckets when load factor is exceeded
+  private func resize() {
+    let oldBuckets = buckets  // Save old entries
+    
+    capacity *= 2  // Double capacity
+    buckets = Array(repeating: [], count: capacity)  // Create new, empty buckets
+    count = 0  // Reset count — will re-add everything
+    
+    // Re-insert all entries to new buckets
+    for bucket in oldBuckets {
+      for entry in bucket {
+        put(entry.key, entry.value)  // Re-hashing required!
+      }
+    }
   }
 }
 
