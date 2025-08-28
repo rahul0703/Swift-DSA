@@ -184,6 +184,131 @@ let sorted = nums.sorted(by: { $0 > $1 })
 ---
 
 
+# Swift Collections – Deque and Heap Reference
+
+This document outlines the key methods of `Deque` and `Heap` from [Swift Collections](https://github.com/apple/swift-collections).
+
+---
+
+## 📦 `Deque<T>` — Double-Ended Queue
+
+A **random-access, double-ended queue**, similar to Java’s `ArrayDeque`.
+
+### ✅ Initialization
+```swift
+var deque = Deque<Int>()
+var dequeWithArray = Deque([1, 2, 3])
+```
+
+### 🔁 Insertion Methods
+```swift
+deque.append(1)                       // Add to back
+deque.append(contentsOf: [2, 3])     
+deque.prepend(0)                      // Add to front
+```
+
+### ❌ Removal Methods
+```swift
+let last = deque.removeLast()         // O(1)
+let first = deque.removeFirst()       // O(1)
+```
+
+### 👀 Peek Methods
+```swift
+let front = deque.first
+let back = deque.last
+```
+
+### 🔁 Other Utilities
+```swift
+deque.count
+deque.isEmpty
+deque.reverse()
+deque.sort()
+```
+
+### 📝 Notes
+- Supports array-style indexing: `deque[2]`
+- Conforms to `Collection`, `RandomAccessCollection`
+
+---
+
+## 📦 `Heap<T>` — Binary Heap / Priority Queue
+
+Implements a binary heap that acts as a min-heap or max-heap depending on the comparator.
+
+### ✅ Initialization
+```swift
+var minHeap = Heap<Int>(areInIncreasingOrder: <)   // Min-heap
+var maxHeap = Heap<Int>(areInIncreasingOrder: >)   // Max-heap
+
+var heapFromArray = Heap([3, 1, 5], areInIncreasingOrder: <)
+```
+
+### ➕ Insertion
+```swift
+heap.insert(4)
+```
+
+### ❌ Removal
+```swift
+let smallest = heap.remove()     // Removes the root
+```
+
+### 👀 Peek
+```swift
+let top = heap.peek()            // View root (min or max)
+```
+
+### 🛠 Other Utilities
+```swift
+heap.count
+heap.isEmpty
+```
+
+### 🔄 Mutation (Advanced)
+```swift
+heap.replace(at: index, with: newValue)
+heap.remove(at: index)
+```
+
+---
+
+## ✅ Summary Table
+
+| Data Structure | Method                                | Description                  |
+|----------------|---------------------------------------|------------------------------|
+| `Deque`        | `append(_:)`, `prepend(_:)`           | Add to back / front          |
+|                | `removeFirst()`, `removeLast()`       | Remove from front / back     |
+|                | `first`, `last`                       | Peek at front / back         |
+|                | `isEmpty`, `count`, `reverse()`, `sort()` | Utility methods              |
+| `Heap`         | `insert(_:)`                          | Insert element               |
+|                | `remove()`                            | Remove root (min or max)     |
+|                | `peek()`                              | Peek at root                 |
+|                | `count`, `isEmpty`                    | Utility methods              |
+|                | `replace(at:with:)`, `remove(at:)`    | Mutation at index (advanced) |
+
+---
+
+## 📌 Importing the Library
+
+Install via Swift Package Manager:
+
+```text
+https://github.com/apple/swift-collections
+```
+
+Import in your file:
+
+```swift
+import Collections
+```
+
+---
+
+## 🧠 Interview Tip
+
+> Swift doesn’t include these in the standard library. If asked not to use libraries, implement custom versions from scratch (heap, deque using 2 stacks or linked list).
 
 ## 🔗 Notes
 

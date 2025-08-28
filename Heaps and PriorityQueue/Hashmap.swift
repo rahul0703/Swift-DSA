@@ -7,10 +7,45 @@
 
 
 class Hashmap {
+  struct Price {
+      let timestamp: Int
+      let value: Int
+  }
+
+  class PriorityQueue<T> {
+    private var elements: [T] = []
+    private let sortingOrder: (T, T) -> Bool
+
+    init(_ order: @escaping (T, T) -> Bool) {
+      self.sortingOrder = order
+    }
+
+    var size: Int {
+      return elements.count
+    }
+
+    var isEmpty: Bool {
+      return elements.isEmpty
+    }
+
+    func push(_ element: T) {
+      elements.append(element)
+      elements.sort(by: sortingOrder)
+    }
+
+    func remove() -> T? {
+      return elements.isEmpty ? nil : elements.removeFirst()
+    }
+
+    func peek() -> T? {
+      return elements.first
+    }
+  }
+
   //Question: 239. Sliding Window Maximum
   func maxStockPricesInWindow(_ prices: [Price], _ k: Int) -> [Int] {
       var result = [Int]()
-      var pq = PriorityQueueCustom<Price> { $0.value > $1.value }
+      var pq = PriorityQueue<Price> { $0.value > $1.value }
       var i = 0
       let n = prices.count
 
@@ -36,7 +71,7 @@ class Hashmap {
       let n = prices.count
       var currentTime = prices.first?.timestamp ?? 0
 
-      var pq = PriorityQueueCustom<Price> { $0.value > $1.value }
+      var pq = PriorityQueue<Price> { $0.value > $1.value }
 
       // Fill first window (from currentTime to currentTime + k - 1)
       while i < n && prices[i].timestamp <= currentTime + k - 1 {
