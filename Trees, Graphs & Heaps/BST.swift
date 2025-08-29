@@ -52,15 +52,15 @@ class BST {
    Leetcode 701: Insert into a Binary Search Tree
    */
   func insertIntoBST(_ root: TreeNode?, _ val: Int) -> TreeNode? {
-    guard let node = root else { return TreeNode(val) }
-    var nodeVal = node.val
-    
-    if nodeVal > val {
-      root?.left = insertIntoBST(node.left, val)
-    } else if nodeVal < val {
-      root?.right = insertIntoBST(node.right, val)
+    guard let node = root else {
+      return TreeNode(val)
     }
-    return root
+    if val < node.val {
+      node.left = insertIntoBST(node.left, val)
+    } else if val > node.val {
+      node.right = insertIntoBST(node.right, val)
+    }
+    return node
   }
   
   /*
@@ -214,8 +214,19 @@ class BST {
   
   /*
    Leetcode 99: Recover Binary Search Tree
+   Approach:
+   naive: O(n) space, do inorder traversal and store the nodes in an array and sort the array and compare.
+   Optimal: We have 2 cases
+      we store 1st, 2nd and 3rd vailation of nodes.
+      case 1: swapped nodes are adjacent in inorder traversal
+      case 2: swapped nodes are not adjacent in inorder traversal
+   if 3rd is nil then swap (1,2) or swap (1,3)
    Very Important Question
    */
+  var first: TreeNode? = nil
+  var second: TreeNode? = nil
+  var third: TreeNode? = nil
+  var prev: TreeNode? = nil
   func recoverTree(_ root: TreeNode?) {
     guard let node = root else { return }
     _ = recoverTreeHelper(node)
@@ -232,10 +243,6 @@ class BST {
       first.val = temp
     }
   }
-  var first: TreeNode? = nil
-  var second: TreeNode? = nil
-  var third: TreeNode? = nil
-  var prev: TreeNode? = nil
   func recoverTreeHelper(_ root: TreeNode?) {
     guard let node = root else { return }
     var value = node.val

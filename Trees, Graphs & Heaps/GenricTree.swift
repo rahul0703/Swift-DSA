@@ -93,6 +93,7 @@ class GenricTree {
   
   /*
    Leetcode 1110: Delete Nodes And Return Forest
+   important question
    */
   var deleteNodeArray: [TreeNode?] = []
   func delNodes(_ root: TreeNode?, _ to_delete: [Int]) -> [TreeNode?] {

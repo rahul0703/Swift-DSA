@@ -402,16 +402,16 @@ class Stack {
    
    now, number of subarrays where arr[i] is minimum is = left * right
    where
-    left: no. of subarrays ending at i
-    right: no. of subarrays starting at i
+   left: no. of subarrays ending at i
+   right: no. of subarrays starting at i
    
    Now, how do we calculate the left and right
    Simple:
-    left = i - index(left smaller elemement)
-    right = index(right smaller element) - i
+   left = i - index(left smaller elemement)
+   right = index(right smaller element) - i
    
    For our case, 1 is minimum so, left = 1 - (-1) = 2,
-                                  right = 4 - 1 = 3
+   right = 4 - 1 = 3
    so, left * right = 2*3 = 6 as [1],[1,2],[1,2,4],[3,1],[3,1,2],[3,1,2,4]
    
    
@@ -463,4 +463,143 @@ class Stack {
     
     return sum
   }
+  
+  /*
+   Question: Leetcode 402: Remove K Digits
+   */
+  func getSmallestNum(_ s: String, _ k: Int) -> String {
+    let chars = Array(s)
+    var stack = [Character]()
+    var count = 0
+    
+    for char in chars {
+      while !stack.isEmpty && count < k && stack.last! > char {
+        stack.removeLast()
+        count += 1
+      }
+      stack.append(char)
+    }
+    
+    // If we haven't removed enough, remove from the end
+    if count < k {
+      let toRemove = k - count
+      stack = Array(stack[0..<(stack.count - toRemove)])
+    }
+    
+    // Trim leading zeros
+    let trimmed = String(stack).drop { $0 == "0" }
+    
+    return trimmed.isEmpty ? "0" : String(trimmed)
+  }
+  
+  /*
+   Leetcode 316: Remove Duplicate Letters
+   Important question
+   */
+  func getLexicoSmallest(_ s: String) -> String {
+    var stack = [Character]()
+    var hashSet = Set<Character>()
+    var hashMap = [Character: Int]()
+    
+    let array = Array(s)
+    
+    // Count remaining occurrences
+    for char in array {
+      hashMap[char, default: 0] += 1
+    }
+    
+    for char in array {
+      // Already in stack? Skip it
+      if hashSet.contains(char) {
+        hashMap[char]! -= 1
+        continue
+      }
+      
+      // Try to pop lexicographically larger characters
+      while !stack.isEmpty && stack.last! > char && hashMap[stack.last!]! > 0 {
+        let removed = stack.removeLast()
+        hashSet.remove(removed)
+      }
+      
+      hashMap[char]! -= 1
+      stack.append(char)
+      hashSet.insert(char)
+    }
+    
+    return String(stack)
+  }
+  
+  
+  /*
+   Leetcode 735: Asteroid Collision
+   */
+  func asteroidCollision(_ asteroids: [Int]) -> [Int] {
+    var stack = [Int]()
+    
+    for curr in asteroids {
+      var destroyed = false
+      
+      while let last = stack.last, last > 0 && curr < 0 {
+        if abs(curr) > abs(last) {
+          stack.removeLast()  // right asteroid destroyed
+        } else if abs(curr) == abs(last) {
+          stack.removeLast()  // both destroyed
+          destroyed = true
+          break
+        } else {
+          // left asteroid destroyed
+          destroyed = true
+          break
+        }
+      }
+      
+      if !destroyed {
+        stack.append(curr)
+      }
+    }
+    
+    return stack
+  }
+  
+  
+  /*
+   Leetcode 394: Decode String
+   */
+  func decodeString(_ s: String) -> String {
+    var numStack = [Int]()
+    var stringStack = [String]()
+    let charArray = Array(s)
+    let len = s.count
+    var i = 0
+    
+    while i < len {
+      let char = charArray[i]
+      
+      if char.isNumber {
+        var str = ""
+        while i < len && charArray[i].isNumber {
+          str.append(charArray[i])
+          i += 1
+        }
+        numStack.append(Int(str)!)
+        continue // important!
+      } else if char == "]" {
+        var buildString = ""
+        while !stringStack.isEmpty && stringStack.last! != "[" {
+          buildString = stringStack.removeLast() + buildString
+        }
+        stringStack.removeLast() // remove '['
+        let repeatCount = numStack.removeLast()
+        let expanded = String(repeating: buildString, count: repeatCount)
+        stringStack.append(expanded)
+      } else {
+        stringStack.append(String(char))
+      }
+      i += 1
+    }
+    
+    return stringStack.joined()
+  }
+  
+  
 }

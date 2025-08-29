@@ -1351,7 +1351,106 @@ class DP_level_1 {
     return max(include, exclude)
   }
   
+  /*
+   Leetcode 486: Optimal Game Strategy
+   Let dp[i][j] be the maximum value you can collect from coins between indices i...j.
+   At each turn, you can choose:
+   coins[i] → opponent gets dp[i+1][j]
+   coins[j] → opponent gets dp[i][j-1]
+   But the opponent will minimize your gain next round.
+   So we simulate both moves and take the max of the min outcomes.
+   dp[i][j] = max(
+   coins[i] + min(dp[i+2][j], dp[i+1][j-1]),
+   coins[j] + min(dp[i+1][j-1], dp[i][j-2])
+   )
+   */
+  func optimalGameStrategy(_ coins: [Int]) -> Int {
+    let n = coins.count
+    var dp = Array(repeating: Array(repeating: 0, count: n), count: n)
+    
+    // Fill the DP table diagonally
+    for gap in 0..<n {
+      var i = 0
+      var j = gap
+      while j < n {
+        let x = (i + 2 <= j) ? dp[i + 2][j] : 0
+        let y = (i + 1 <= j - 1) ? dp[i + 1][j - 1] : 0
+        let z = (i <= j - 2) ? dp[i][j - 2] : 0
+        
+        dp[i][j] = max(
+          coins[i] + min(x, y),
+          coins[j] + min(y, z)
+        )
+        
+        i += 1
+        j += 1
+      }
+    }
+    
+    return dp[0][n - 1]
+  }
   
+  /*
+   Leetcode 887: Super Egg Drop
+   For each floor f (from 1 to n):
+   Drop egg from floor f
+   If it breaks → solve for k-1 eggs and f-1 floors
+   If it doesn’t break → solve for k eggs and n-f floors
+   Worst-case = max(breakCase, notBreakCase) + 1 (for current drop)
+   We try all f and take the minimum over all such worst-case attempts.
+   
+   var memo: [String: Int] = [:]
+   
+   If k == 1: must try all floors → return n
+   If n == 0 or n == 1: return n
+   */
+  func superEggDrop(_ k: Int, _ n: Int) -> Int {
+    // Memoization dictionary: "k,n" → min attempts
+    var memo: [String: Int] = [:]
+    
+    // Recursive function
+    func dp(_ k: Int, _ n: Int) -> Int {
+      let key = "\(k),\(n)"
+      if let cached = memo[key] {
+        return cached
+      }
+      
+      // Base cases
+      if n == 0 || n == 1 {
+        return n
+      }
+      if k == 1 {
+        return n
+      }
+      
+      var low = 1
+      var high = n
+      var result = n  // Worst case: try every floor
+      
+      // Use binary search to optimize the drop floor selection
+      while low <= high {
+        let mid = (low + high) / 2
+        
+        let breakCase = dp(k - 1, mid - 1)
+        let notBreakCase = dp(k, n - mid)
+        
+        let temp = 1 + max(breakCase, notBreakCase)
+        
+        if breakCase > notBreakCase {
+          high = mid - 1  // Try lower floor
+        } else {
+          low = mid + 1   // Try higher floor
+        }
+        
+        result = min(result, temp)
+      }
+      
+      memo[key] = result
+      return result
+    }
+    
+    return dp(k, n)
+  }
   
   public class TreeNode {
     public var val: Int
