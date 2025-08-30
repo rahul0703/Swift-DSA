@@ -814,5 +814,65 @@ class GraphLeetCode {
     
     return result
   }
+  
+  /*
+   Leetcode 1192: Critical Connections in a Network
+   Tarjan's Algorithm
+   */
+  func criticalConnections(_ n: Int, _ connections: [[Int]]) -> [[Int]] {
+    // 1. Build adjacency list
+    var graph = [Int: [Int]]()
+    for connection in connections {
+      let u = connection[0]
+      let v = connection[1]
+      graph[u, default: []].append(v)
+      graph[v, default: []].append(u)
+    }
+    
+    // 2. Track discovery time, lowest reachable time, and visited
+    var disc = Array(repeating: -1, count: n)
+    var low = Array(repeating: -1, count: n)
+    var visited = Array(repeating: false, count: n)
+    
+    // 3. Global timer
+    var timer = 0
+    
+    // 4. Result
+    var bridges = [[Int]]()
+    
+    // 5. DFS
+    func dfs(_ curr: Int, _ parent: Int) {
+      visited[curr] = true
+      disc[curr] = timer
+      low[curr] = timer
+      timer += 1
+      
+      for neighbor in graph[curr]! {
+        if neighbor == parent {
+          continue // Don't go back through the edge we came from
+        }
+        
+        if !visited[neighbor] {
+          dfs(neighbor, curr)
+          
+          // Update low after returning from DFS
+          low[curr] = min(low[curr], low[neighbor])
+          
+          // Bridge condition
+          if low[neighbor] > disc[curr] {
+            bridges.append([curr, neighbor])
+          }
+        } else {
+          // Back edge
+          low[curr] = min(low[curr], disc[neighbor])
+        }
+      }
+    }
+    
+    // 6. Start DFS from node 0
+    dfs(0, -1)
+    
+    return bridges
+  }
 }
 

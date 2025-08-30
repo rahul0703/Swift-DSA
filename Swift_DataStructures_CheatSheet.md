@@ -235,44 +235,63 @@ deque.sort()
 
 ---
 
-## 📦 `Heap<T>` — Binary Heap / Priority Queue
+## 📦 `Heap<T>` — Binary Heap / Priority Queue (Swift Collections)
 
 Implements a binary heap that acts as a min-heap or max-heap depending on the comparator.
 
 ### ✅ Initialization
-```swift
-var minHeap = Heap<Int>(areInIncreasingOrder: <)   // Min-heap
-var maxHeap = Heap<Int>(areInIncreasingOrder: >)   // Max-heap
 
-var heapFromArray = Heap([3, 1, 5], areInIncreasingOrder: <)
+```swift
+import Collections
+
+var minHeap = Heap<Int>(sortedBy: <)   // Min-heap
+var maxHeap = Heap<Int>(sortedBy: >)   // Max-heap
+
+var heapFromArray = Heap([3, 1, 5], sortedBy: <)
 ```
 
 ### ➕ Insertion
+
 ```swift
 heap.insert(4)
 ```
 
-### ❌ Removal
+### ✅ Removal (Safe, Optional)
+
 ```swift
-let smallest = heap.remove()     // Removes the root
+let smallest = heap.popMin()   // For min-heap → returns T?
+let largest = heap.popMax()    // For max-heap → returns T?
 ```
 
-### 👀 Peek
+> These methods return `nil` if the heap is empty — safe and non-crashing.
+
+### 👀 Peek (Non-destructive)
+
 ```swift
-let top = heap.peek()            // View root (min or max)
+let top = heap.peek()   // Returns T? — top element (min or max)
 ```
 
 ### 🛠 Other Utilities
+
 ```swift
 heap.count
 heap.isEmpty
 ```
 
 ### 🔄 Mutation (Advanced)
+
 ```swift
 heap.replace(at: index, with: newValue)
 heap.remove(at: index)
 ```
+
+> These are useful for in-place updates (e.g. Dijkstra, A*) but rarely used in basic heap problems.
+
+### 🧠 Notes
+
+- There is **no `remove()` or `pop()`** method — use `popMin()` or `popMax()`.
+- `Heap` is a **value type** (`struct`)
+- Does **not** support key-priority updates directly — remove and reinsert instead.
 
 ---
 
