@@ -286,6 +286,20 @@ class Arrays {
   
   /*
    Leetcode 1482: Minimum Number of Days to Make m Bouquets
+   You are given an integer array bloomDay, an integer m and an integer k.
+
+   You want to make m bouquets. To make a bouquet, you need to use k adjacent flowers from the garden.
+
+   The garden consists of n flowers, the ith flower will bloom in the bloomDay[i] and then can be used in exactly one bouquet.
+
+   Return the minimum number of days you need to wait to be able to make m bouquets from the garden. If it is impossible to make m bouquets return -1.
+   
+   Approach:
+    1. The min days will be minimum of array as in that day at least one flower will bloom
+    2. The max days will be maximum of array as in that day all flowers will bloom
+    3. The answer lies between min and max days.
+    4. For every mid day, check if it is possible to make m bouquets in mid days.
+    5. edge case: if length of array < m*k, then return -1 as it is impossible to make m bouquets.
    */
   func minDays(_ arr: [Int], _ m: Int, _ k: Int) -> Int {
     var reqFlowers = m * k
@@ -335,6 +349,9 @@ class Arrays {
   
   /*
    Leetcode 1011: Capacity To Ship Packages Within D Days
+   A conveyor belt has packages that must be shipped from one port to another within days days.
+   The ith package on the conveyor belt has a weight of weights[i]. Each day, we load the ship with packages on the conveyor belt (in the order given by weights). We may not load more weight than the maximum weight capacity of the ship.
+   Return the least weight capacity of the ship that will result in all the packages on the conveyor belt being shipped within days days.
    */
   func shipWithinDays(_ w: [Int], _ d: Int) -> Int {
     var len = w.count
@@ -954,6 +971,4 @@ class Arrays {
     }
     return hashset.map { $0 }
   }
-  
-  
 }

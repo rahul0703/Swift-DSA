@@ -73,9 +73,7 @@ class Greedy {
   
   /*
    Very Important: Question: Leetcode 621, Task Scheduler
-   
    */
-  
   func leastInterval(_ tasks: [Character], _ n: Int) -> Int {
     var len = tasks.count
     var countArray = Array(repeating: 0, count: 26)

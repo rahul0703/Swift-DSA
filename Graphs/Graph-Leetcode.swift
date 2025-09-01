@@ -874,5 +874,51 @@ class GraphLeetCode {
     
     return bridges
   }
+  
+  /*
+   Leetcode 210: Course Schedule II
+   */
+  func findTaskOrder(_ n: Int, _ prerequisites: [[Int]]) -> [Int] {
+    var graph = [Int: [Int]]()
+    for edge in prerequisites {
+      let from = edge[1], to = edge[0]
+      graph[from, default: []].append(to)
+    }
+    
+    var stack = [Int]()
+    var visited = Array(repeating: 0, count: n)  // 0 = unvisited, 1 = visiting, 2 = visited
+    
+    func dfs(_ node: Int) -> Bool {
+      if visited[node] == 1 {
+        return false  // Cycle found
+      }
+      if visited[node] == 2 {
+        return true  // Already processed
+      }
+      
+      visited[node] = 1  // Mark as visiting
+      
+      for neighbor in graph[node, default: []] {
+        if !dfs(neighbor) {
+          return false
+        }
+      }
+      
+      visited[node] = 2  // Mark as fully processed
+      stack.append(node)
+      return true
+    }
+    
+    for node in 0..<n {
+      if visited[node] == 0 {
+        if !dfs(node) {
+          return []
+        }
+      }
+    }
+    
+    return stack.reversed()
+  }
+  
 }
 
